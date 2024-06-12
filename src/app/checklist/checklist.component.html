@@ -1,0 +1,13 @@
+<p-card [header]="checklist?.name" [subheader]="'Archived on: ' + checklist?.createdAt" styleClass="mt-3">
+    <h3>This checklist was used in:</h3>
+    <p *ngIf="checklist?.publishedIn?.length == 0">Nowhere!</p>
+    <ul>
+        <li *ngFor="let event of checklist?.publishedIn">{{ event.name }}</li>
+    </ul>
+
+    <h3>Downloads</h3>
+    <p *ngIf="checklist?.urls?.length == 0">No downloads available!</p>
+    <ul>
+        <li *ngFor="let url of checklist?.urls"><a [href]="url.url" target="_blank">{{ url.name }}</a></li>
+    </ul>
+</p-card>
