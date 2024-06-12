@@ -1,0 +1,5 @@
+<p-card *ngFor="let checklist of checklists" [header]="checklist.name" [subheader]="'Archived on: ' + checklist.createdAt"
+    styleClass="hover-bg mt-3" [routerLink]="'/archive/' + checklist.id">
+    <p>{{ checklist.publishedIn.length }} source(s)</p>
+    <p>{{ checklist.urls.length }} files(s)</p>
+</p-card>
