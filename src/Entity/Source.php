@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\SourceRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -9,10 +13,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SourceRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => 'conference:list'])
+    ]
+)]
 class Source
 {
     #[ORM\Id]
@@ -20,14 +29,16 @@ class Source
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
-
+    
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups(['conference:list'])]
     private ?string $name = null;
-
+    
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
-
+    
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Groups(['conference:list'])]
     private ?int $year = null;
 
     #[ORM\Column]
@@ -37,7 +48,6 @@ class Source
      * @var Collection<int, Checklist>
      */
     #[ORM\ManyToMany(targetEntity: Checklist::class, mappedBy: 'published_in')]
-    #[Ignore]
     private Collection $checklists;
 
     public function __construct($name = null)
