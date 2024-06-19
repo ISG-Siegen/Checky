@@ -30,7 +30,7 @@ class Source
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
     
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     #[Groups(['conference:list'])]
     private ?string $name = null;
     
