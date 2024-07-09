@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChecklistComponent } from './checklist.component';
+import { GeneratorComponent } from './generator.component';
 
-describe('ChecklistComponent', () => {
-  let component: ChecklistComponent;
-  let fixture: ComponentFixture<ChecklistComponent>;
+describe('GeneratorComponent', () => {
+  let component: GeneratorComponent;
+  let fixture: ComponentFixture<GeneratorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ChecklistComponent]
+      declarations: [GeneratorComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(ChecklistComponent);
+    fixture = TestBed.createComponent(GeneratorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

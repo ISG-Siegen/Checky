@@ -7,26 +7,28 @@ import { AppComponent } from './app.component';
 import { MenubarModule } from 'primeng/menubar';
 import { CardModule } from 'primeng/card';
 
-import { ArchiveComponent } from './archive/archive.component';
 import { StartComponent } from './start/start.component';
 import { HttpClientModule } from '@angular/common/http';
-import { ChecklistComponent } from './checklist/checklist.component';
+import { ApiModule, BASE_PATH } from './api';
+import { environment } from '../environments/environment';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ArchiveComponent,
     StartComponent,
-    ChecklistComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ApiModule,
+    BrowserAnimationsModule,
     MenubarModule,
     CardModule,
   ],
   providers: [
-    importProvidersFrom(HttpClientModule)
+    importProvidersFrom(HttpClientModule),
+    { provide: BASE_PATH, useValue: environment.apiBase },
   ],
   bootstrap: [AppComponent]
 })

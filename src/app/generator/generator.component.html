@@ -1,0 +1,100 @@
+<p-autoComplete #autocomplete
+    id="questionSearch"
+    [suggestions]="suggestions" 
+    (completeMethod)="search($event)"
+    (onSelect)="select($event)"
+    optionLabel="question"
+    panelStyleClass="vw-panel"
+    scrollHeight="70vh"
+    styleClass="w-full"
+    inputStyleClass="w-full"
+    placeholder="Search for archived questions...">
+
+    <ng-template let-item pTemplate="item">
+        <h4 style="text-wrap: wrap;">{{ item.question }}</h4>
+        <ul>
+            @for (conf of item.conference; track $index) {
+                <li>
+                    {{ conf.conference.name }} - {{ conf.year }}
+                </li>
+            }
+        </ul>
+    </ng-template>
+</p-autoComplete>
+<div class="flex flex-column align-items-center">
+    <h3>OR</h3>
+    <p-button label="Add question" icon="pi pi-plus" (onClick)="addQuestionVisible = true"/>
+</div>
+
+@for (question of questions; track question.id) {
+    <p-card class="block mt-3">
+        <ng-template pTemplate="title">
+            <div class="flex">
+                <span>{{ $index + 1 }}</span>
+                <div class="ml-auto"></div>
+                <p-button icon="pi pi-arrow-up" class="ml-1" [disabled]="$first" [style.visibility]="$first ? 'hidden' : 'visible'" [rounded]="true" [text]="true" severity="secondary" (click)="move($index, true)"/>
+                <p-button icon="pi pi-arrow-down" class="ml-1" [disabled]="$last" [style.visibility]="$last ? 'hidden' : 'visible'" [rounded]="true" [text]="true" severity="secondary" (click)="move($index, false)"/>
+                <p-button icon="pi pi-trash" class="ml-1" [rounded]="true" [text]="true" severity="secondary" (click)="remove($index)"/>
+            </div>
+        </ng-template>
+        <h4>{{ question.question }}</h4>
+        <span>Answer Type: {{ question.answerType }}</span>
+    </p-card>
+}
+
+@if (recommendedQuestions.length > 0) {
+    <h3>Questions you may like:</h3>
+}
+<p-accordion #recommendationAccordion [(activeIndex)]="activeRecommendation">
+    @for (rQ of recommendedQuestions; track rQ.id) {
+        <p-accordionTab iconPos="end">
+            <ng-template pTemplate="header">
+                <p-button label="Add" icon="pi pi-plus-circle" (onClick)="suggestionAdd($event, rQ, $index)"></p-button>
+                <span class="mx-3">{{ rQ.question }}</span>
+            </ng-template>
+            <ul>
+                @for (conf of rQ.conference; track $index) {
+                    <li>
+                        {{ conf.conference.name }} - {{ conf.year }}
+                    </li>
+                }
+            </ul>
+        </p-accordionTab>
+    }
+</p-accordion>
+
+@if (questions.length > 0) {
+    <p-button label="Generate" icon="pi pi-cog" severity="success" class="ml-auto mt-5" (onClick)="generateTex()" [loading]="texGenerationLoading"></p-button>
+}
+
+
+<p-dialog header="Add Question" [modal]="true" [(visible)]="addQuestionVisible" [style]="{ width: '66vw' }" contentStyleClass="p-5" focusOnShow="false">
+        <div class="flex flex-column gap-5">
+            <p-floatLabel class="w-full" >
+                <textarea id="newQuestion" type="text" class="w-full" pInputTextarea [(ngModel)]="newQuestion" rows="1"></textarea>
+                <label for="newQuestion">Question Text</label>
+            </p-floatLabel>
+            <div>
+                <label for="newQuestionType" class="block mb-2">Question Type:</label>
+                <p-selectButton 
+                    id="newQuestionType"
+                    [options]="answerTypes" 
+                    [(ngModel)]="newAnswerType"/>
+            </div>
+        </div>
+        <div class="flex justify-content-end gap-2 mt-5">
+            <p-button label="Clear Form" class="mr-auto" severity="danger" size="small" (click)="clearNewQuestionForm()" />
+            <p-button label="Cancel" severity="secondary" size="small" (click)="addQuestionVisible = false" />
+            <p-button label="Save" severity="success" size="small" (click)="addQuestionClick()" />
+        </div>
+</p-dialog>
+
+<p-dialog header="Done!" [modal]="true" [(visible)]="outputDialogVisible" [style]="{ width: '66vw' }" contentStyleClass="p-5" focusOnShow="false">
+    <textarea type="text" class="w-full" readonly pInputTextarea rows="10">{{ texOutput }}</textarea>
+    <div class="flex justify-content-center gap-3 mt-3">
+        <p-button label="Copy" icon="pi pi-clipboard" (onClick)="copyToClipboard()"></p-button>
+        <p-button label="Download" icon="pi pi-download" (onClick)="download()"></p-button>
+    </div>
+</p-dialog>
+
+<p-toast />

@@ -21,7 +21,9 @@ export class AppComponent {
     },
     {
 
-      label: 'Test',
+      label: 'Generator',
+      icon: 'pi pi-cog',
+      route: '/generator',
     }
   ]
 

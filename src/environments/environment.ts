@@ -1,3 +1,3 @@
 export const environment = {
-  apiBase: 'https://checklist.recommender-systems.com/api/'
+  apiBase: 'https://checklist.recommender-systems.com'
 };
