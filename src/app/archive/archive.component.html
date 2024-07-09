@@ -1,4 +1,4 @@
-<p-tree class="m-3 w-full md:w-30rem" [value]="nodes" (onNodeExpand)="onNodeExpand($event)" [loading]="loading">
+<p-tree class="m-3 w-full md:w-30rem" [value]="nodes" (onNodeExpand)="onNodeExpand($event)" [lazy]="true" loadingMode="icon" >
     <ng-template let-node pTemplate="instanceDetail" class="">
         <div class="flex flex-column">
             <h4>Files:</h4>
@@ -10,5 +10,5 @@
             <!--p-button label="Show more" icon="pi pi-plus" severity="secondary" [outlined]="true" size="small"/-->
             <!--span>{{node.data.reviewer_prompt}}</span-->
         </div>
-    </ng-template>  
+    </ng-template>
 </p-tree>

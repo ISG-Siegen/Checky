@@ -11,10 +11,8 @@ import { ArchiveService } from '../api';
 export class ArchiveComponent {
 
   nodes: TreeNode[] = []
-  loading = false
 
   constructor(private archiveService: ArchiveService) {
-    this.loading = true
     archiveService.getAppArchiveGetconferences()
       .subscribe(res => {
         res.forEach(val => {
@@ -22,21 +20,35 @@ export class ArchiveComponent {
             key: val.id ?? '',
             label: val.name,
             leaf: false,
-            type: 'conference'
+            type: 'conference',
+            loading: false
           })
         })
-        this.loading = false
       })
   }
 
+  private setLoading(node: TreeNode, loading: boolean) {
+    let parent = node.parent
+    if (parent) {
+      parent.loading = loading
+    } else {
+      node.loading = loading
+    }
+  }
+
   onNodeExpand(event: TreeNodeExpandEvent) {
-    this.loading = true
+
+    if (event.node.children) {
+      // If children already loaded, return
+      return
+    }
 
     if (!event.node.key) {
       console.error('No key for node:', event.node);
-      this.loading = false
       return
     }
+
+    this.setLoading(event.node, true)
 
     if (event.node.type == 'conference') {
       this.archiveService.getAppArchiveGetinstances(event.node.key)
@@ -46,10 +58,11 @@ export class ArchiveComponent {
               key: val.id ?? '',
               label: val.year.toString(),
               leaf: false,
-              type: 'instance'
+              type: 'instance',
+              loading: false
             }
           })
-          this.loading = false
+          this.setLoading(event.node, false)
         })
     } else if (event.node.type == 'instance') {
       this.archiveService.getAppArchiveGetinstancedetails(event.node.key)
@@ -58,13 +71,15 @@ export class ArchiveComponent {
             key: res.id ?? '',
             label: res.year.toString(),
             data: res,
-            type: 'instanceDetail'
+            type: 'instanceDetail',
+            loading: true
           }]
-          this.loading = false
+          this.setLoading(event.node, false)
         })
     } else {
       console.error('Invalid node type:', event.node.type);
-      this.loading = false
+      this.setLoading(event.node, false)
     }
+
   }
 }
