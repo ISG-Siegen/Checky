@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Checklist;
+use App\Entity\ConferenceInstance;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Checklist>
+ * @extends ServiceEntityRepository<ConferenceInstances>
  */
-class ChecklistRepository extends ServiceEntityRepository
+class ConferenceInstanceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Checklist::class);
+        parent::__construct($registry, ConferenceInstance::class);
     }
 
 //    /**
-//     * @return Checklist[] Returns an array of Checklist objects
+//     * @return ConferenceInstances[] Returns an array of ConferenceInstances objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -31,7 +31,7 @@ class ChecklistRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Checklist
+//    public function findOneBySomeField($value): ?ConferenceInstances
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

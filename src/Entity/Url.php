@@ -4,12 +4,13 @@ namespace App\Entity;
 
 use App\Repository\UrlRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Validator\Constraints\Date;
 
 #[ORM\Entity(repositoryClass: UrlRepository::class)]
 class Url
@@ -18,26 +19,33 @@ class Url
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['archive:details'])]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['archive:details'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['archive:details'])]
     private ?string $url = null;
-
+    
     #[ORM\Column]
+    #[Groups(['archive:details'])]
     private ?\DateTimeImmutable $created_at = null;
 
-    #[ORM\ManyToOne(inversedBy: 'urls')]
-    #[Ignore]
-    private ?Checklist $checklist = null;
+    /**
+     * @var Collection<int, ConferenceInstances>
+     */
+    #[ORM\ManyToMany(targetEntity: ConferenceInstance::class, mappedBy: 'url')]
+    private Collection $conferenceInstances;
 
     public function __construct($name = null, $url = null)
     {
         $this->created_at = new DateTimeImmutable();
         $this->name = $name;
         $this->url = $url;
+        $this->conferenceInstances = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -81,15 +89,31 @@ class Url
         return $this;
     }
 
-    public function getChecklist(): ?Checklist
+    /**
+     * @return Collection<int, ConferenceInstances>
+     */
+    public function getConferenceInstances(): Collection
     {
-        return $this->checklist;
+        return $this->conferenceInstances;
     }
 
-    public function setChecklist(?Checklist $checklist): static
+    public function addConferenceInstance(ConferenceInstance $conferenceInstance): static
     {
-        $this->checklist = $checklist;
+        if (!$this->conferenceInstances->contains($conferenceInstance)) {
+            $this->conferenceInstances->add($conferenceInstance);
+            $conferenceInstance->addUrl($this);
+        }
 
         return $this;
     }
+
+    public function removeConferenceInstance(ConferenceInstance $conferenceInstance): static
+    {
+        if ($this->conferenceInstances->removeElement($conferenceInstance)) {
+            $conferenceInstance->removeUrl($this);
+        }
+
+        return $this;
+    }
+
 }
