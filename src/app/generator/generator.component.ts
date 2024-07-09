@@ -30,9 +30,10 @@ export class GeneratorComponent {
 
   recommendedQuestions: Question[] = []
   activeRecommendation: number | null = null
+  recommendationFadeout = false
 
   constructor(private questionsService: QuestionsService, private texService: TexGeneratorService, private msgService: MessageService) {
-    this.addQuestion(new LocalQuestion('First question', AnswerType.FreeText))
+    // this.addQuestion(new LocalQuestion('First question', AnswerType.FreeText))
     // this.addQuestion(new LocalQuestion('Second question', AnswerType.FreeTextAndJustification))
     // this.addQuestion(new LocalQuestion('Third question', AnswerType.None))
     // this.addQuestion(new LocalQuestion('Fourth question', AnswerType.FreeTextAndJustification))
@@ -88,6 +89,7 @@ export class GeneratorComponent {
     this.questionsService.getAppQuestionRandom(except)
       .subscribe(res => {
         this.activeRecommendation = null
+        this.recommendationFadeout = false
         this.recommendedQuestions = res
       })
 
@@ -146,6 +148,7 @@ export class GeneratorComponent {
     event.stopPropagation()
     this.activeRecommendation = null
     this.recommendedQuestions.splice(index, 1)
+    this.recommendationFadeout = true
 
     this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id ?? uuidv4()))
   }
