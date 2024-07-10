@@ -38,7 +38,7 @@ export class GeneratorComponent {
   questionEditor!: QuestionEditorComponent
 
   constructor(private questionsService: QuestionsService, private texService: TexGeneratorService, private msgService: MessageService) {
-    this.addQuestion(new LocalQuestion('First question', AnswerType.FreeText))
+    // this.addQuestion(new LocalQuestion('First question', AnswerType.FreeText))
     // this.addQuestion(new LocalQuestion('Second question', AnswerType.FreeTextAndJustification))
     // this.addQuestion(new LocalQuestion('Third question', AnswerType.None))
     // this.addQuestion(new LocalQuestion('Fourth question', AnswerType.FreeTextAndJustification))
