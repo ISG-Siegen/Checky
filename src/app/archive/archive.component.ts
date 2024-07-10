@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
-import { TreeNode } from 'primeng/api';
+import { MessageService, TreeNode } from 'primeng/api';
 import { TreeNodeExpandEvent } from 'primeng/tree';
 import { ArchiveService } from '../api';
 
 @Component({
   selector: 'app-archive',
   templateUrl: './archive.component.html',
-  styleUrl: './archive.component.scss'
+  styleUrl: './archive.component.scss',
+  providers: [MessageService]
 })
 export class ArchiveComponent {
 
   nodes: TreeNode[] = []
 
-  constructor(private archiveService: ArchiveService) {
+  constructor(private archiveService: ArchiveService, private msgService: MessageService) {
     archiveService.getAppArchiveGetconferences()
       .subscribe(res => {
         res.forEach(val => {
@@ -81,5 +82,23 @@ export class ArchiveComponent {
       this.setLoading(event.node, false)
     }
 
+  }
+
+  copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Copied!',
+          detail: 'Prompt was copied to your clipboard!'
+        })
+      })
+      .catch(() => {
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Error!',
+          detail: 'Could not write to your clipboard! Please copy manually.'
+        })
+      })
   }
 }

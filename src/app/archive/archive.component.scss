@@ -1,3 +1,15 @@
-:host ::ng-deep .hover-bg:hover {
-    background-color: #f3f4f6;
+:host ::ng-deep {
+    .hover-bg:hover {
+        background-color: #f3f4f6;
+    }
+
+    .p-treenode-content .p-treenode-label {
+        width: 100%;
+
+    }
+
+}
+
+textarea {
+    resize: vertical;
 }

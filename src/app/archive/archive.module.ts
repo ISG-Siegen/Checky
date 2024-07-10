@@ -5,6 +5,8 @@ import { ArchiveRoutingModule } from './archive-routing.module';
 import { ArchiveComponent } from './archive.component';
 import { TreeModule } from 'primeng/tree';
 import { ButtonModule } from 'primeng/button';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ToastModule } from 'primeng/toast';
 
 
 @NgModule({
@@ -15,7 +17,9 @@ import { ButtonModule } from 'primeng/button';
     CommonModule,
     ArchiveRoutingModule,
     TreeModule,
-    ButtonModule
+    ButtonModule,
+    InputTextareaModule,
+    ToastModule
   ]
 })
 export class ArchiveModule { }

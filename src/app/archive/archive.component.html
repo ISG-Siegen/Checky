@@ -1,14 +1,26 @@
 <p-tree class="m-3 w-full md:w-30rem" [value]="nodes" (onNodeExpand)="onNodeExpand($event)" [lazy]="true" loadingMode="icon" >
-    <ng-template let-node pTemplate="instanceDetail" class="">
-        <div class="flex flex-column">
+    <ng-template let-node pTemplate="instanceDetail">
+        <div class="flex flex-column w-full">
             <h4>Files:</h4>
             <ul>
                 <a *ngFor="let u of node.data.url" [href]="u.url" target="_blank"><li>{{u.name}}</li></a>
             </ul>
-            <h4>Prompts:</h4>
-            <span *ngIf="node.data.author_prompt">{{node.data.author_prompt}}</span>
-            <!--p-button label="Show more" icon="pi pi-plus" severity="secondary" [outlined]="true" size="small"/-->
-            <!--span>{{node.data.reviewer_prompt}}</span-->
+            @if (node.data.author_prompt) {
+                <div class="flex align-items-center mt-5">
+                    <h4 class="mr-auto">Author Prompt:</h4>
+                    <p-button label="Copy" icon="pi pi-clipboard" (onClick)="copyToClipboard(node.data.author_prompt)"></p-button>
+                </div>
+                <textarea readonly rows="1" pInputTextarea [value]="node.data.author_prompt"></textarea>
+            }
+            @if (node.data.reviewer_prompt) {
+                <div class="flex align-items-center mt-5">
+                    <h4 class="mr-auto">Reviewer Prompt:</h4>
+                    <p-button label="Copy" icon="pi pi-clipboard" (onClick)="copyToClipboard(node.data.reviewer_prompt)"></p-button>
+                </div>
+                <textarea readonly rows="1" pInputTextarea [value]="node.data.reviewer_prompt"></textarea>
+            }
         </div>
     </ng-template>
 </p-tree>
+
+<p-toast/>
