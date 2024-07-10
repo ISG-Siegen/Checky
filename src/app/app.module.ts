@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { MenubarModule } from 'primeng/menubar';
-import { CardModule } from 'primeng/card';
 
 import { StartComponent } from './start/start.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -24,7 +23,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ApiModule,
     BrowserAnimationsModule,
     MenubarModule,
-    CardModule,
   ],
   providers: [
     importProvidersFrom(HttpClientModule),
