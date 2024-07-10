@@ -4,6 +4,7 @@ import { AutoComplete, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from
 import { v4 as uuidv4 } from 'uuid';
 import { TexGeneratorService } from '../tex-generator.service';
 import { MessageService } from 'primeng/api';
+import { QuestionEditorComponent } from '../question-editor/question-editor.component';
 
 @Component({
   selector: 'app-generator',
@@ -33,8 +34,11 @@ export class GeneratorComponent {
   activeRecommendation: number | null = null
   recommendationFadeout = false
 
+  @ViewChild('questionEditor')
+  questionEditor!: QuestionEditorComponent
+
   constructor(private questionsService: QuestionsService, private texService: TexGeneratorService, private msgService: MessageService) {
-    // this.addQuestion(new LocalQuestion('First question', AnswerType.FreeText))
+    this.addQuestion(new LocalQuestion('First question', AnswerType.FreeText))
     // this.addQuestion(new LocalQuestion('Second question', AnswerType.FreeTextAndJustification))
     // this.addQuestion(new LocalQuestion('Third question', AnswerType.None))
     // this.addQuestion(new LocalQuestion('Fourth question', AnswerType.FreeTextAndJustification))
@@ -54,6 +58,16 @@ export class GeneratorComponent {
     this.autocomplete.clear()
   }
 
+  edit(index: number) {
+    console.log(this.questions);
+
+    this.questionEditor.editQuestion(this.questions[index])
+      .subscribe(editedQuestion => {
+        this.questions[index] = editedQuestion
+        console.log(this.questions);
+      })
+  }
+
   remove(index: number) {
     this.questions.splice(index, 1)
   }
@@ -65,21 +79,6 @@ export class GeneratorComponent {
     this.questions[index] = tmp
   }
 
-  addQuestionClick() {
-
-    //TODO: Add invalid flags when one of these cases is hit
-    if (!this.newQuestion) {
-      return
-    }
-
-    if (!this.newAnswerType) {
-      return
-    }
-
-    this.addQuestion(new LocalQuestion(this.newQuestion, this.newAnswerType))
-    this.addQuestionVisible = false
-    this.clearNewQuestionForm()
-  }
 
   addQuestion(question: LocalQuestion) {
     this.questions.push(question)
@@ -106,11 +105,6 @@ export class GeneratorComponent {
         this.recommendedQuestions = res
         this.fetchRecommendationsLoading = false
       })
-  }
-
-  clearNewQuestionForm() {
-    this.newQuestion = null
-    this.newAnswerType = null
   }
 
   generateTex() {
@@ -164,6 +158,7 @@ export class GeneratorComponent {
 
     this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id ?? uuidv4()))
   }
+
 }
 
 export class LocalQuestion {

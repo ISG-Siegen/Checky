@@ -13,11 +13,13 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
+import { QuestionEditorComponent } from '../question-editor/question-editor.component';
 
 
 @NgModule({
   declarations: [
-    GeneratorComponent
+    GeneratorComponent,
+    QuestionEditorComponent
   ],
   imports: [
     CommonModule,
