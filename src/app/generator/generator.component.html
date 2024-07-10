@@ -64,7 +64,11 @@
 </p-accordion>
 
 @if (questions.length > 0) {
-    <p-button label="Generate" icon="pi pi-cog" severity="success" class="ml-auto mt-5" (onClick)="generateTex()" [loading]="texGenerationLoading"></p-button>
+    <div class="mt-5 flex">
+        <p-button label="Get new recommendations" icon="pi pi-sync" severity="info" (onClick)="fetchRecommendations()" [loading]="fetchRecommendationsLoading"></p-button>
+
+        <p-button label="Generate" icon="pi pi-cog" severity="success" class="ml-auto" (onClick)="generateTex()" [loading]="texGenerationLoading"></p-button>
+    </div>
 }
 
 

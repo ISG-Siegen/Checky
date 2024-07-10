@@ -29,6 +29,7 @@ export class GeneratorComponent {
   outputDialogVisible = false
 
   recommendedQuestions: Question[] = []
+  fetchRecommendationsLoading = false
   activeRecommendation: number | null = null
   recommendationFadeout = false
 
@@ -82,17 +83,29 @@ export class GeneratorComponent {
 
   addQuestion(question: LocalQuestion) {
     this.questions.push(question)
+    if (this.recommendedQuestions.length == 0) {
+      this.fetchRecommendations()
+    }
+  }
+
+  fetchRecommendations() {
+    //TODO: Error handling
+    this.fetchRecommendationsLoading = true
 
     let except = this.questions.map(q => q.id)
+    this.recommendedQuestions.forEach(q => {
+      if (q.id) {
+        except.push(q.id)
+      }
+    })
 
-    //TODO: Error handling
     this.questionsService.getAppQuestionRandom(except)
       .subscribe(res => {
         this.activeRecommendation = null
         this.recommendationFadeout = false
         this.recommendedQuestions = res
+        this.fetchRecommendationsLoading = false
       })
-
   }
 
   clearNewQuestionForm() {
@@ -148,7 +161,6 @@ export class GeneratorComponent {
     event.stopPropagation()
     this.activeRecommendation = null
     this.recommendedQuestions.splice(index, 1)
-    this.recommendationFadeout = true
 
     this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id ?? uuidv4()))
   }
