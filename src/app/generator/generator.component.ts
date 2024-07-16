@@ -1,10 +1,15 @@
 import { Component, ViewChild } from '@angular/core';
-import { AnswerType, Question, QuestionsService } from '../api';
+import { AnswerType, Question, QuestionsService, SaveChecklistRequest, SaveQuestionRequest, SaveService } from '../api';
 import { AutoComplete, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { v4 as uuidv4 } from 'uuid';
 import { TexGeneratorService } from '../tex-generator.service';
 import { MessageService } from 'primeng/api';
 import { QuestionEditorComponent } from '../question-editor/question-editor.component';
+import { Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { SafeSubscriber } from 'rxjs/internal/Subscriber';
+import { catchError, EMPTY } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-generator',
@@ -34,14 +39,64 @@ export class GeneratorComponent {
   activeRecommendation: number | null = null
   recommendationFadeout = false
 
+  saveChecklistLoading = false
+  saveDialogVisible = false
+  currentChecklistName = ''
+  currentChecklistUuid: string | null = null
+  currentEditLink = ''
+  loadingSavedChecklist = false
+  errorMsg = ''
+
   @ViewChild('questionEditor')
   questionEditor!: QuestionEditorComponent
 
-  constructor(private questionsService: QuestionsService, private texService: TexGeneratorService, private msgService: MessageService) {
+  constructor(
+    private questionsService: QuestionsService,
+    private texService: TexGeneratorService,
+    private msgService: MessageService,
+    private saveService: SaveService,
+    private location: Location,
+    private activatedRoute: ActivatedRoute
+  ) {
     // this.addQuestion(new LocalQuestion('First question', AnswerType.FreeText))
     // this.addQuestion(new LocalQuestion('Second question', AnswerType.FreeTextAndJustification))
     // this.addQuestion(new LocalQuestion('Third question', AnswerType.None))
     // this.addQuestion(new LocalQuestion('Fourth question', AnswerType.FreeTextAndJustification))
+
+    let loadUuid = this.activatedRoute.snapshot.paramMap.get('uuid')
+    if (loadUuid) {
+      //TODO: Error handling
+      this.loadingSavedChecklist = true
+      saveService.getByUuid(loadUuid)
+        .pipe(
+          catchError((err: HttpErrorResponse) => {
+            console.error(err);
+            if (err.status == 404) {
+              this.errorMsg = 'Checklist not found!'
+            } else {
+              this.errorMsg = 'An error occurred while loading this checklist! Please try again later.'
+            }
+            this.loadingSavedChecklist = false
+            return EMPTY
+          })
+        )
+        .subscribe(res => {
+
+          if (res) {
+            this.currentChecklistName = res.name
+            this.currentChecklistUuid = res.id ?? uuidv4()
+
+            for (const [index, q] of res.questions.entries()) {
+              // Only fetch recommendations when adding the last one
+              this.addQuestion(new LocalQuestion(q.question, q.answerType, q.originalQuestion?.id), index == res.questions.length - 1)
+            }
+          } else {
+            this.errorMsg = 'Checklist not found!'
+          }
+
+          this.loadingSavedChecklist = false
+        })
+    }
   }
 
   search(event: AutoCompleteCompleteEvent) {
@@ -54,7 +109,7 @@ export class GeneratorComponent {
 
   select(event: AutoCompleteSelectEvent) {
     let question: Question = event.value
-    this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id ?? uuidv4()))
+    this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id))
     this.autocomplete.clear()
   }
 
@@ -80,10 +135,12 @@ export class GeneratorComponent {
   }
 
 
-  addQuestion(question: LocalQuestion) {
+  addQuestion(question: LocalQuestion, fetchRecommendations = true) {
     this.questions.push(question)
-    if (this.recommendedQuestions.length == 0) {
-      this.fetchRecommendations()
+    if (fetchRecommendations) {
+      if (this.recommendedQuestions.length == 0) {
+        this.fetchRecommendations()
+      }
     }
   }
 
@@ -91,7 +148,13 @@ export class GeneratorComponent {
     //TODO: Error handling
     this.fetchRecommendationsLoading = true
 
-    let except = this.questions.map(q => q.id)
+    let except = this.questions.reduce((filtered, current) => {
+      if (current.originalQuestionId) {
+        filtered.push(current.originalQuestionId)
+      }
+      return filtered
+    }, [] as string[])
+
     this.recommendedQuestions.forEach(q => {
       if (q.id) {
         except.push(q.id)
@@ -114,7 +177,7 @@ export class GeneratorComponent {
     this.texGenerationLoading = false
   }
 
-  copyToClipboard() {
+  copyTexToClipboard() {
     navigator.clipboard.writeText(this.texOutput)
       .then(() => {
         this.msgService.add({
@@ -132,7 +195,7 @@ export class GeneratorComponent {
       })
   }
 
-  download() {
+  downloadTex() {
     let blob = new Blob([this.texOutput])
     let a = document.createElement('a')
     a.style.display = 'none'
@@ -156,11 +219,65 @@ export class GeneratorComponent {
     this.activeRecommendation = null
     this.recommendedQuestions.splice(index, 1)
 
-    this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id ?? uuidv4()))
+    this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id))
   }
 
+  saveChecklist() {
+    let questionRequests: SaveQuestionRequest[] = this.questions.map(q => {
+      return {
+        question: {
+          question: q.question,
+          answerType: q.answerType
+        },
+        originalQuestion: q.originalQuestionId ?? null
+      }
+    })
+
+
+    console.log(this.currentChecklistName);
+
+
+    let request: SaveChecklistRequest = {
+      uuid: this.currentChecklistUuid,
+      name: this.currentChecklistName,
+      questionRequests: questionRequests
+    }
+
+    this.saveChecklistLoading = true
+
+    this.saveService.postSave(request)
+      .subscribe(res => {
+        this.location.go('/generator/' + res)
+        this.currentEditLink = window.location.href
+        this.saveDialogVisible = true
+        this.saveChecklistLoading = false
+      })
+
+  }
+
+  copyEditLinkToClipboard() {
+    navigator.clipboard.writeText(this.currentEditLink)
+      .then(() => {
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Copied!',
+          detail: 'Link copied to your clipboard!'
+        })
+      })
+      .catch(() => {
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Error!',
+          detail: 'Could not write to your clipboard! Please copy manually or download.'
+        })
+      })
+  }
 }
 
 export class LocalQuestion {
-  constructor(public question: string, public answerType: AnswerType, public id = uuidv4()) { }
+
+  // Only used for tracking in @for
+  id = uuidv4()
+
+  constructor(public question: string, public answerType: AnswerType, public originalQuestionId?: string | null) { }
 }

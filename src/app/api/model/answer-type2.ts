@@ -11,7 +11,11 @@
  */
 
 
-export interface Conference2 { 
-    name: string;
-}
+export type AnswerType2 = 'None' | 'FreeTextAndJustification' | 'FreeText';
+
+export const AnswerType2 = {
+    None: 'None' as AnswerType2,
+    FreeTextAndJustification: 'FreeTextAndJustification' as AnswerType2,
+    FreeText: 'FreeText' as AnswerType2
+};
 

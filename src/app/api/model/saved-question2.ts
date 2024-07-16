@@ -9,9 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { AnswerType3 } from './answer-type3';
 
 
-export interface Conference2 { 
-    name: string;
+export interface SavedQuestion2 { 
+    question: string;
+    answerType: AnswerType3;
 }
+export namespace SavedQuestion2 {
+}
+
 

@@ -9,9 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SavedQuestion2 } from './saved-question2';
 
 
-export interface Conference2 { 
-    name: string;
+export interface SaveQuestionRequest { 
+    question: SavedQuestion2;
+    originalQuestion?: string | null;
 }
 

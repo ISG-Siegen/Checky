@@ -11,7 +11,9 @@
  */
 
 
-export interface Conference2 { 
-    name: string;
-}
+/**
+ * @type PostSave200Response
+ * @export
+ */
+export type PostSave200Response = string;
 

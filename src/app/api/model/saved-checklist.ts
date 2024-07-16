@@ -9,9 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SavedQuestion } from './saved-question';
 
 
-export interface Conference2 { 
+export interface SavedChecklist { 
+    id?: string | null;
     name: string;
+    questions: Array<SavedQuestion>;
 }
 

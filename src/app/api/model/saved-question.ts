@@ -9,9 +9,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SavedQuestionOriginalQuestion } from './saved-question-original-question';
+import { AnswerType2 } from './answer-type2';
 
 
-export interface Conference2 { 
-    name: string;
+export interface SavedQuestion { 
+    id?: string | null;
+    question: string;
+    answerType: AnswerType2;
+    originalQuestion?: SavedQuestionOriginalQuestion | null;
 }
+export namespace SavedQuestion {
+}
+
 

@@ -11,7 +11,7 @@
  */
 
 
-export interface Conference2 { 
-    name: string;
+export interface Question2 { 
+    id?: string | null;
 }
 

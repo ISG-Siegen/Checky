@@ -9,9 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SaveQuestionRequest } from './save-question-request';
 
 
-export interface Conference2 { 
+export interface SaveChecklistRequest { 
+    uuid?: string | null;
     name: string;
+    questionRequests: Array<SaveQuestionRequest>;
 }
 

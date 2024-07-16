@@ -1,86 +1,117 @@
-<p-autoComplete #autocomplete
-    id="questionSearch"
-    [suggestions]="suggestions" 
-    (completeMethod)="search($event)"
-    (onSelect)="select($event)"
-    optionLabel="question"
-    panelStyleClass="vw-panel"
-    scrollHeight="70vh"
-    styleClass="w-full"
-    inputStyleClass="w-full"
-    placeholder="Search for archived questions...">
-
-    <ng-template let-item pTemplate="item">
-        <h4 style="text-wrap: wrap;">{{ item.question }}</h4>
-        <ul>
-            @for (conf of item.conference; track $index) {
-                <li>
-                    {{ conf.conference.name }} - {{ conf.year }}
-                </li>
-            }
-        </ul>
-    </ng-template>
-</p-autoComplete>
-<div class="flex flex-column align-items-center">
-    <h3>OR</h3>
-    <p-button label="Add question" icon="pi pi-plus" (onClick)="addQuestionVisible = true"/>
-</div>
-
-@for (question of questions; track question.id) {
-    <p-card class="block mt-3">
-        <ng-template pTemplate="title">
-            <div class="flex">
-                <span>{{ $index + 1 }}</span>
-                <div class="ml-auto"></div>
-                <p-button icon="pi pi-arrow-up" class="ml-1" [disabled]="$first" [style.visibility]="$first ? 'hidden' : 'visible'" [rounded]="true" [text]="true" severity="secondary" (click)="move($index, true)"/>
-                <p-button icon="pi pi-arrow-down" class="ml-1" [disabled]="$last" [style.visibility]="$last ? 'hidden' : 'visible'" [rounded]="true" [text]="true" severity="secondary" (click)="move($index, false)"/>
-                <p-button icon="pi pi-pencil" class="ml-1" [rounded]="true" [text]="true" severity="secondary" (click)="edit($index)"/>
-                <p-button icon="pi pi-trash" class="ml-1" [rounded]="true" [text]="true" severity="secondary" (click)="remove($index)"/>
-            </div>
-        </ng-template>
-        <h4>{{ question.question }}</h4>
-        <span>Answer Type: {{ question.answerType }}</span>
-    </p-card>
+@if (errorMsg.length > 0) {
+    <h3>{{ errorMsg }}</h3>
 }
 
-@if (recommendedQuestions.length > 0) {
-    <h3 class="fadein animation-duration-500">Questions you may like:</h3>
-}
-<p-accordion #recommendationAccordion [(activeIndex)]="activeRecommendation">
-    @for (rQ of recommendedQuestions; track rQ.id) {
-        <p-accordionTab iconPos="end" [class.fadeoutright]="recommendationFadeout" class="fadeinleft animation-fill-forwards animation-ease-in-out animation-duration-500 block">
-            <ng-template pTemplate="header">
-                <p-button label="Add" icon="pi pi-plus-circle" (onClick)="suggestionAdd($event, rQ, $index)"></p-button>
-                <span class="mx-3">{{ rQ.question }}</span>
-            </ng-template>
+@if (loadingSavedChecklist) {
+    <p-skeleton height="2rem" class="mt-3"/>
+    <p-skeleton height="3rem" class="mt-2"/>
+    <p-skeleton height="1rem" class="my-4"/>
+    <p-skeleton height="2rem" class="mt-3"/>
+    <p-skeleton height="3rem" class="mt-2"/>
+    <p-skeleton height="10rem" class="mt-5"/>
+} @else if(errorMsg.length == 0) {
+    <h3>Give Your Checklist a Name:</h3>
+    <input type="text" pInputText placeholder="My Awesome Checklist" [(ngModel)]="currentChecklistName">
+    
+    <p-divider class="my-3"/>
+    
+    <h3>Add Questions:</h3>
+    <p-autoComplete #autocomplete
+        id="questionSearch"
+        [suggestions]="suggestions" 
+        (completeMethod)="search($event)"
+        (onSelect)="select($event)"
+        optionLabel="question"
+        panelStyleClass="vw-panel"
+        scrollHeight="70vh"
+        styleClass="w-full"
+        inputStyleClass="w-full"
+        placeholder="Search for archived questions...">
+    
+        <ng-template let-item pTemplate="item">
+            <h4 style="text-wrap: wrap;">{{ item.question }}</h4>
             <ul>
-                @for (conf of rQ.conference; track $index) {
+                @for (conf of item.conference; track $index) {
                     <li>
                         {{ conf.conference.name }} - {{ conf.year }}
                     </li>
                 }
             </ul>
-        </p-accordionTab>
+        </ng-template>
+    </p-autoComplete>
+    <div class="flex flex-column align-items-center">
+        <h3>OR</h3>
+        <p-button label="Add question" icon="pi pi-plus" (onClick)="addQuestionVisible = true"/>
+    </div>
+    
+    @for (question of questions; track question.id) {
+        <p-card class="block mt-3">
+            <ng-template pTemplate="title">
+                <div class="flex">
+                    <span>{{ $index + 1 }}</span>
+                    <div class="ml-auto"></div>
+                    <p-button icon="pi pi-arrow-up" class="ml-1" [disabled]="$first" [style.visibility]="$first ? 'hidden' : 'visible'" [rounded]="true" [text]="true" severity="secondary" (click)="move($index, true)"/>
+                    <p-button icon="pi pi-arrow-down" class="ml-1" [disabled]="$last" [style.visibility]="$last ? 'hidden' : 'visible'" [rounded]="true" [text]="true" severity="secondary" (click)="move($index, false)"/>
+                    <p-button icon="pi pi-pencil" class="ml-1" [rounded]="true" [text]="true" severity="secondary" (click)="edit($index)"/>
+                    <p-button icon="pi pi-trash" class="ml-1" [rounded]="true" [text]="true" severity="secondary" (click)="remove($index)"/>
+                </div>
+            </ng-template>
+            <h4>{{ question.question }}</h4>
+            <span>Answer Type: {{ question.answerType }}</span>
+        </p-card>
     }
-</p-accordion>
-
-@if (questions.length > 0) {
-    <div class="mt-5 flex">
-        <p-button label="Get new recommendations" icon="pi pi-sync" severity="info" (onClick)="fetchRecommendations()" [loading]="fetchRecommendationsLoading"></p-button>
-
-        <p-button label="Generate" icon="pi pi-cog" severity="success" class="ml-auto" (onClick)="generateTex()" [loading]="texGenerationLoading"></p-button>
-    </div>
+    
+    @if (questions.length > 0) {
+        <div class="flex align-items-center">
+            <h3 class="fadein animation-duration-500">Questions you may like:</h3>
+            <p-button class="ml-auto" size="small" label="Get new recommendations" icon="pi pi-sync" severity="info" (onClick)="fetchRecommendations()" [loading]="fetchRecommendationsLoading"></p-button>
+        </div>
+    
+        <p-accordion #recommendationAccordion [(activeIndex)]="activeRecommendation">
+            @for (rQ of recommendedQuestions; track rQ.id) {
+                <p-accordionTab iconPos="end" [class.fadeoutright]="recommendationFadeout" class="fadeinleft animation-fill-forwards animation-ease-in-out animation-duration-500 block">
+                    <ng-template pTemplate="header">
+                        <p-button label="Add" icon="pi pi-plus-circle" (onClick)="suggestionAdd($event, rQ, $index)"></p-button>
+                        <span class="mx-3">{{ rQ.question }}</span>
+                    </ng-template>
+                    <ul>
+                        @for (conf of rQ.conference; track $index) {
+                            <li>
+                                {{ conf.conference.name }} - {{ conf.year }}
+                            </li>
+                        }
+                    </ul>
+                </p-accordionTab>
+            }
+        </p-accordion>
+    
+        <p-divider class="my-3"/>
+    
+        <div class="flex">
+            <p-button label="Save" icon="pi pi-save" severity="info" class="ml-auto mr-2" (onClick)="saveChecklist()" [loading]="saveChecklistLoading"></p-button>
+    
+            <p-button label="Generate" icon="pi pi-cog" severity="success" (onClick)="generateTex()" [loading]="texGenerationLoading"></p-button>
+        </div>
+    }
+    
+    <app-question-editor [(visible)]="addQuestionVisible" header="Add Question" (onSave)="addQuestion($event)" />
+    <app-question-editor #questionEditor [visible]="false" header="Edit Question" />
+    
+    <p-dialog header="Done!" [modal]="true" [(visible)]="outputDialogVisible" [style]="{ width: '66vw' }" contentStyleClass="p-5" focusOnShow="false">
+        <textarea type="text" class="w-full" readonly pInputTextarea rows="10">{{ texOutput }}</textarea>
+        <div class="flex justify-content-center gap-3 mt-3">
+            <p-button label="Copy" icon="pi pi-clipboard" (onClick)="copyTexToClipboard()"></p-button>
+            <p-button label="Download" icon="pi pi-download" (onClick)="downloadTex()"></p-button>
+        </div>
+    </p-dialog>
+    
+    <p-dialog header="Saved!" [modal]="true" [(visible)]="saveDialogVisible" [style]="{ width: '66vw' }" contentStyleClass="px-4 pb-4" focusOnShow="false">
+        <span class="block mb-3 text-xl">Anyone with the link below can view <b style="color: var(--red-500);">and edit</b> this checklist:</span>
+        <input type="text" class="w-full" readonly pInputText rows="1" [value]="currentEditLink" />
+        <div class="flex justify-content-center gap-3 mt-3">
+            <p-button label="Copy" icon="pi pi-clipboard" (onClick)="copyEditLinkToClipboard()"></p-button>
+        </div>
+    </p-dialog>
+    
+    <p-toast />
 }
-
-<app-question-editor [(visible)]="addQuestionVisible" header="Add Question" (onSave)="addQuestion($event)" />
-<app-question-editor #questionEditor [visible]="false" header="Edit Question" />
-
-<p-dialog header="Done!" [modal]="true" [(visible)]="outputDialogVisible" [style]="{ width: '66vw' }" contentStyleClass="p-5" focusOnShow="false">
-    <textarea type="text" class="w-full" readonly pInputTextarea rows="10">{{ texOutput }}</textarea>
-    <div class="flex justify-content-center gap-3 mt-3">
-        <p-button label="Copy" icon="pi pi-clipboard" (onClick)="copyToClipboard()"></p-button>
-        <p-button label="Download" icon="pi pi-download" (onClick)="download()"></p-button>
-    </div>
-</p-dialog>
-
-<p-toast />

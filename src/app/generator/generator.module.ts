@@ -14,6 +14,9 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
 import { QuestionEditorComponent } from '../question-editor/question-editor.component';
+import { InputTextModule } from 'primeng/inputtext';
+import { DividerModule } from 'primeng/divider';
+import { SkeletonModule } from 'primeng/skeleton';
 
 
 @NgModule({
@@ -33,8 +36,10 @@ import { QuestionEditorComponent } from '../question-editor/question-editor.comp
     FloatLabelModule,
     SelectButtonModule,
     ToastModule,
-    AccordionModule
-
+    AccordionModule,
+    InputTextModule,
+    DividerModule,
+    SkeletonModule
   ]
 })
 export class GeneratorModule { }

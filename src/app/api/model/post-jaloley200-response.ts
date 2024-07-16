@@ -11,7 +11,9 @@
  */
 
 
-export interface Conference2 { 
-    name: string;
-}
+/**
+ * @type PostJaloley200Response
+ * @export
+ */
+export type PostJaloley200Response = string;
 
