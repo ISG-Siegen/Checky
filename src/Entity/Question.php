@@ -20,8 +20,8 @@ class Question
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['question:get_questions'])]
-    private ?Uuid $id = null;
+    #[Groups(['question:get_questions', 'save:updateRequest', 'save:savedChecklist'])]
+    private ?Uuid $id = null;   
     
     #[ORM\ManyToMany(targetEntity: QuestionGroup::class, mappedBy: 'questions')]
     #[Groups(['question:get_questions'])]
@@ -45,6 +45,12 @@ class Question
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
+    /**
+     * @var Collection<int, SavedQuestion>
+     */
+    #[ORM\OneToMany(targetEntity: SavedQuestion::class, mappedBy: 'originalQuestion')]
+    private Collection $savedQuestions;
+
     public function __construct(string $question, AnswerType $answerType)
     {
         $this->conference = new ArrayCollection();
@@ -53,6 +59,7 @@ class Question
 
         $this->question = $question;
         $this->answerType = $answerType;
+        $this->savedQuestions = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -134,6 +141,36 @@ class Question
     public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SavedQuestion>
+     */
+    public function getSavedQuestions(): Collection
+    {
+        return $this->savedQuestions;
+    }
+
+    public function addSavedQuestion(SavedQuestion $savedQuestion): static
+    {
+        if (!$this->savedQuestions->contains($savedQuestion)) {
+            $this->savedQuestions->add($savedQuestion);
+            $savedQuestion->setOriginalQuestion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSavedQuestion(SavedQuestion $savedQuestion): static
+    {
+        if ($this->savedQuestions->removeElement($savedQuestion)) {
+            // set the owning side to null (unless already changed)
+            if ($savedQuestion->getOriginalQuestion() === $this) {
+                $savedQuestion->setOriginalQuestion(null);
+            }
+        }
 
         return $this;
     }
