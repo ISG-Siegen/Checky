@@ -161,7 +161,11 @@ export class GeneratorComponent {
       }
     })
 
-    this.questionsService.getAppQuestionRandom(except)
+    let query = this.questions.reduce((accu, current) => {
+      return accu + ' ' + current.question
+    }, '')
+
+    this.questionsService.getAppQuestionSimilar(query, except)
       .subscribe(res => {
         this.activeRecommendation = null
         this.recommendationFadeout = false
