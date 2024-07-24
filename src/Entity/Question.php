@@ -51,6 +51,12 @@ class Question
     #[ORM\OneToMany(targetEntity: SavedQuestion::class, mappedBy: 'originalQuestion')]
     private Collection $savedQuestions;
 
+    /**
+     * @var Collection<int, TermFrequency>
+     */
+    #[ORM\OneToMany(targetEntity: TermFrequency::class, mappedBy: 'question')]
+    private Collection $termFrequencies;
+
     public function __construct(string $question, AnswerType $answerType)
     {
         $this->conference = new ArrayCollection();
@@ -60,6 +66,7 @@ class Question
         $this->question = $question;
         $this->answerType = $answerType;
         $this->savedQuestions = new ArrayCollection();
+        $this->termFrequencies = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -169,6 +176,36 @@ class Question
             // set the owning side to null (unless already changed)
             if ($savedQuestion->getOriginalQuestion() === $this) {
                 $savedQuestion->setOriginalQuestion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TermFrequency>
+     */
+    public function getTermFrequencies(): Collection
+    {
+        return $this->termFrequencies;
+    }
+
+    public function addTermFrequency(TermFrequency $termFrequency): static
+    {
+        if (!$this->termFrequencies->contains($termFrequency)) {
+            $this->termFrequencies->add($termFrequency);
+            $termFrequency->setQuestion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTermFrequency(TermFrequency $termFrequency): static
+    {
+        if ($this->termFrequencies->removeElement($termFrequency)) {
+            // set the owning side to null (unless already changed)
+            if ($termFrequency->getQuestion() === $this) {
+                $termFrequency->setQuestion(null);
             }
         }
 

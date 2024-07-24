@@ -4,9 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Question;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Uuid;
+use App\Util\DatabaseUtil;
 
 /**
  * @extends ServiceEntityRepository<Question>
@@ -37,7 +37,7 @@ class QuestionRepository extends ServiceEntityRepository
     public function getThreeRandom(array $except): array
     {
         $countQb = $this->createQueryBuilder('q');
-        $countQb = $this->filterExceptions($countQb, $except);
+        $countQb = DatabaseUtil::filterQuestionsById($countQb, $except);
         $countQb->select('count(q)');
         $count = $countQb->getQuery()
             ->getSingleScalarResult();
@@ -48,7 +48,7 @@ class QuestionRepository extends ServiceEntityRepository
             $r = rand(0, $count - 1);
 
             $resQb = $this->createQueryBuilder('q');
-            $resQb = $this->filterExceptions($resQb, $except);
+            $resQb = DatabaseUtil::filterQuestionsById($resQb, $except);
             $question = $resQb->setFirstResult($r)
                 ->setMaxResults(1)
                 ->getQuery()
@@ -58,18 +58,6 @@ class QuestionRepository extends ServiceEntityRepository
         }
 
         return $res;
-    }
-
-    /**
-     * @param Uuid[] $except
-     */
-    private function filterExceptions(QueryBuilder $qb, array $except)
-    {
-        foreach ($except as $index => $exc) {
-            $qb->andWhere($qb->expr()->neq('q.id', ':exc' . $index))
-                ->setParameter('exc' . $index, $exc->toBinary());
-        }
-        return $qb;
     }
 
 
