@@ -17,12 +17,14 @@ import { QuestionEditorComponent } from '../question-editor/question-editor.comp
 import { InputTextModule } from 'primeng/inputtext';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
+import { AnswerTypePipe } from '../answer-type.pipe';
 
 
 @NgModule({
   declarations: [
     GeneratorComponent,
-    QuestionEditorComponent
+    QuestionEditorComponent,
+    AnswerTypePipe
   ],
   imports: [
     CommonModule,
