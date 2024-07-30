@@ -69,7 +69,7 @@
     
         <p-accordion #recommendationAccordion [(activeIndex)]="activeRecommendation">
             @for (rQ of recommendedQuestions; track rQ.id) {
-                <p-accordionTab iconPos="end" [class.fadeoutright]="recommendationFadeout" class="fadeinleft animation-fill-forwards animation-ease-in-out animation-duration-500 block">
+                <p-accordionTab iconPos="end" [class.fadeoutright]="fetchRecommendationsLoading" class="fadeinleft animation-fill-forwards animation-ease-in-out animation-duration-500 block">
                     <ng-template pTemplate="header">
                         <p-button label="Add" icon="pi pi-plus-circle" (onClick)="suggestionAdd($event, rQ, $index)"></p-button>
                         <span class="mx-3">{{ rQ.question }}</span>

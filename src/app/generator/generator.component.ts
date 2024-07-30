@@ -7,7 +7,6 @@ import { MessageService } from 'primeng/api';
 import { QuestionEditorComponent } from '../question-editor/question-editor.component';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { SafeSubscriber } from 'rxjs/internal/Subscriber';
 import { catchError, EMPTY } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -37,7 +36,6 @@ export class GeneratorComponent {
   recommendedQuestions: Question[] = []
   fetchRecommendationsLoading = false
   activeRecommendation: number | null = null
-  recommendationFadeout = false
 
   saveChecklistLoading = false
   saveDialogVisible = false
@@ -168,7 +166,6 @@ export class GeneratorComponent {
     this.questionsService.getAppQuestionSimilar(query, except)
       .subscribe(res => {
         this.activeRecommendation = null
-        this.recommendationFadeout = false
         this.recommendedQuestions = res
         this.fetchRecommendationsLoading = false
       })
