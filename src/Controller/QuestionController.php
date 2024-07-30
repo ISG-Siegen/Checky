@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Question;
 use App\Repository\QuestionRepository;
+use App\Repository\RateLimitRepository;
 use App\Repository\TermFrequencyRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenAI;
@@ -194,8 +195,21 @@ class QuestionController extends AbstractController
             items: new OA\Items(type: 'string')
         )
     )]
-    public function gpt(Request $request)
+    #[OA\Response(
+        response: 429,
+        description: 'The global rate limit of 50 request/hour was exceeded. Returns the time when the next request is possible.',
+        content: new OA\JsonContent(
+            type: 'string',
+            format: 'date-time'
+        )
+    )]
+    public function gpt(Request $request, RateLimitRepository $rateLimitRepo)
     {
+
+        $exceeded = $rateLimitRepo->isExceeded();
+        if ($exceeded) {
+            return $this->json($exceeded, 429);
+        }
 
         $queryQuestions = $request->query->all('questions');
         if (!$queryQuestions) {
