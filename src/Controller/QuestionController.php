@@ -6,6 +6,7 @@ use App\Entity\Question;
 use App\Repository\QuestionRepository;
 use App\Repository\TermFrequencyRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenAI;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -167,5 +168,96 @@ class QuestionController extends AbstractController
         }
 
         return $this->json($repo->getSimilarQuestions($query, $uuids), context: ['groups' => ['question:get_questions']]);
+    }
+
+    #[Route('gpt', methods: 'get')]
+    #[OA\Get(
+        summary: 'Ask GPT to recommend questions',
+        description: 'Asks GPT to recommend questions based on the ones given in the query.'
+    )]
+    #[OA\Parameter(
+        name: 'questions[]',
+
+        in: 'query',
+        schema: new OA\Schema(
+            type: 'array',
+            items: new OA\Items(
+                type: 'string',
+            )
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns three questions recommended by GPT.',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(type: 'string')
+        )
+    )]
+    public function gpt(Request $request)
+    {
+
+        $queryQuestions = $request->query->all('questions');
+        if (!$queryQuestions) {
+            return $this->json('Query questions missing', 400);
+        }
+
+        $apiKey = $this->getParameter('app.openaikey');
+        $client = OpenAI::client($apiKey);
+
+        $questionsJoin = join("\n", $queryQuestions);
+
+        $res = $client->chat()->create([
+            'model' => 'gpt-4o-mini-2024-07-18',
+            'messages' => [
+                ['role' => 'system', 'content' => 'You are a recommender system that recommends questions for conference checklists. The user gives you a set of questions and your questions should should relate or add onto these. The questions are newline separated. Respond by doing a json call to the respondQuestions function. Give a maximum of three (3) questions in your answer'],
+                ['role' => 'user', 'content' => $questionsJoin],
+            ],
+            'response_format' => [
+                'type' => 'json_object'
+            ],
+            'tool_choice' => 'required',
+            'tools' => [
+                [
+                    'type' => 'function',
+                    'function' => [
+                        'name' => 'respondQuestions',
+                        'parameters' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'questions' =>  [
+                                    'type' => 'array',
+                                    'items' => [
+                                        'type' => 'string',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $funcCall = $res->choices[0]->message->toolCalls[0]->function;
+
+        if ($funcCall->name != 'respondQuestions') {
+            return $this->invalidOpenAi();
+        }
+
+        $funcArgs = json_decode($funcCall->arguments);
+        if (!$funcArgs) {
+            return $this->invalidOpenAi();
+        }
+
+        if (!property_exists($funcArgs, 'questions')) {
+            return $this->invalidOpenAi();
+        }
+
+        return $this->json($funcArgs->questions);
+    }
+
+    private function invalidOpenAi()
+    {
+        return $this->json('Invalid response from OpenAI.', status: 502);
     }
 }
