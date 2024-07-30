@@ -7,7 +7,7 @@ import { MessageService } from 'primeng/api';
 import { QuestionEditorComponent } from '../question-editor/question-editor.component';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, EMPTY, map, pipe } from 'rxjs';
+import { catchError, EMPTY, finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AccordionTabOpenEvent } from 'primeng/accordion';
 
@@ -51,6 +51,8 @@ export class GeneratorComponent {
   currentEditLink = ''
   loadingSavedChecklist = false
   errorMsg = ''
+
+  rateLimitNextFree = ''
 
   @ViewChild('questionEditor')
   questionEditor!: QuestionEditorComponent
@@ -185,17 +187,28 @@ export class GeneratorComponent {
   fetchGPTRecommendations() {
     //TODO: Error handling
     this.fetchGPTRecommendationsLoading = true
-
+    
     let questionStrings = this.questions.map(q => q.question)
-
+    
     this.questionsService.getAppQuestionGpt(questionStrings)
-      .subscribe(res => {
-        const newQuestions = res.map(qText => {
-          return new LocalQuestion(qText, AnswerType.FreeTextAndJustification)
-        })
-
-        this.recommendedGPTQuestions = newQuestions
+    .pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status == 429) {
+          this.rateLimitNextFree = err.error
+        }
+        
+        return EMPTY
+      }),
+      finalize(() => {
         this.fetchGPTRecommendationsLoading = false
+      })
+    )
+    .subscribe(res => {
+      const newQuestions = res.map(qText => {
+        return new LocalQuestion(qText, AnswerType.FreeTextAndJustification)
+      })
+      this.rateLimitNextFree = ''
+      this.recommendedGPTQuestions = newQuestions
       })
   }
 
@@ -265,10 +278,6 @@ export class GeneratorComponent {
         originalQuestion: q.originalQuestionId ?? null
       }
     })
-
-
-    console.log(this.currentChecklistName);
-
 
     let request: SaveChecklistRequest = {
       uuid: this.currentChecklistUuid,

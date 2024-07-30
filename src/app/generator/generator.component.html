@@ -99,6 +99,16 @@
             </div>
         }
 
+        @if (rateLimitNextFree) {
+            <div class="flex align-items-center custom-card fadeinleft animation-fill-forwards animation-ease-in-out animation-duration-500 mt-1" [class.fadeoutright]="fetchGPTRecommendationsLoading">
+                <div class="mx-3 flex flex-column">
+                    <b style="color: var(--red-500);">Rate Limit Exceeded!</b>
+                    <span>We currently have a global rate limit on the ChatGPT generated questions.</span>
+                    <span>The next request is available at: {{ rateLimitNextFree | date:'short':'':'de' }}</span>
+                </div>
+            </div>
+        }
+
         <p-divider class="my-3"/>
     
         <div class="flex">
