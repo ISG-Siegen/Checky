@@ -10,14 +10,14 @@
                     <h4 class="mr-auto">Author Prompt:</h4>
                     <p-button label="Copy" icon="pi pi-clipboard" (onClick)="copyToClipboard(node.data.author_prompt)"></p-button>
                 </div>
-                <textarea readonly rows="1" pInputTextarea [value]="node.data.author_prompt"></textarea>
+                <textarea readonly rows="5" pInputTextarea [value]="node.data.author_prompt"></textarea>
             }
             @if (node.data.reviewer_prompt) {
                 <div class="flex align-items-center mt-5">
                     <h4 class="mr-auto">Reviewer Prompt:</h4>
                     <p-button label="Copy" icon="pi pi-clipboard" (onClick)="copyToClipboard(node.data.reviewer_prompt)"></p-button>
                 </div>
-                <textarea readonly rows="1" pInputTextarea [value]="node.data.reviewer_prompt"></textarea>
+                <textarea readonly rows="5" pInputTextarea [value]="node.data.reviewer_prompt"></textarea>
             }
         </div>
     </ng-template>
