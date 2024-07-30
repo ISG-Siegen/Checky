@@ -63,10 +63,10 @@
     
     @if (questions.length > 0) {
         <div class="flex align-items-center">
-            <h3 class="fadein animation-duration-500">Questions you may like:</h3>
-            <p-button class="ml-auto" size="small" label="Get new recommendations" icon="pi pi-sync" severity="info" (onClick)="fetchRecommendations()" [loading]="fetchRecommendationsLoading"></p-button>
+            <span class="font-bold text-xl fadein animation-duration-500">Questions you may like:</span>
+            <p-button class="ml-auto py-3" size="small" label="Get new recommendations" icon="pi pi-sync" severity="info" (onClick)="fetchRecommendations()" [loading]="fetchRecommendationsLoading"></p-button>
         </div>
-    
+        
         <p-accordion #recommendationAccordion [(activeIndex)]="activeRecommendation">
             @for (rQ of recommendedQuestions; track rQ.id) {
                 <p-accordionTab iconPos="end" [class.fadeoutright]="fetchRecommendationsLoading" class="fadeinleft animation-fill-forwards animation-ease-in-out animation-duration-500 block">
@@ -85,6 +85,20 @@
             }
         </p-accordion>
     
+        <p-divider class="my-3"/>
+
+        <div class="flex align-items-center">
+            <span class="font-bold text-xl fadein animation-duration-500">ChatGPT recommended:</span>
+            <p-button class="ml-auto py-3" size="small" label="Ask for new questions" icon="pi pi-sync" severity="info" (onClick)="fetchGPTRecommendations()" [loading]="fetchGPTRecommendationsLoading"></p-button>
+        </div>
+
+        @for (rQ of recommendedGPTQuestions; track rQ.id) {
+            <div class="flex align-items-center custom-card fadeinleft animation-fill-forwards animation-ease-in-out animation-duration-500 mt-1" [class.fadeoutright]="fetchGPTRecommendationsLoading">
+                <p-button label="Add" icon="pi pi-plus-circle" (onClick)="gptSuggestionAdd($event, rQ, $index)"></p-button>
+                <span class="mx-3 font-bold">{{ rQ.question }}</span>
+            </div>
+        }
+
         <p-divider class="my-3"/>
     
         <div class="flex">

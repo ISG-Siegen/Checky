@@ -7,8 +7,9 @@ import { MessageService } from 'primeng/api';
 import { QuestionEditorComponent } from '../question-editor/question-editor.component';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, EMPTY } from 'rxjs';
+import { catchError, EMPTY, map, pipe } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AccordionTabOpenEvent } from 'primeng/accordion';
 
 @Component({
   selector: 'app-generator',
@@ -33,9 +34,15 @@ export class GeneratorComponent {
   texOutput = ''
   outputDialogVisible = false
 
+  // Normal recommendations
   recommendedQuestions: Question[] = []
   fetchRecommendationsLoading = false
   activeRecommendation: number | null = null
+
+  // ChatGPT recommendations
+  recommendedGPTQuestions: LocalQuestion[] = []
+  fetchGPTRecommendationsLoading = false
+  activeGPTRecommendation: number | null = null
 
   saveChecklistLoading = false
   saveDialogVisible = false
@@ -86,7 +93,8 @@ export class GeneratorComponent {
 
             for (const [index, q] of res.questions.entries()) {
               // Only fetch recommendations when adding the last one
-              this.addQuestion(new LocalQuestion(q.question, q.answerType, q.originalQuestion?.id), index == res.questions.length - 1)
+              const isLast = index == res.questions.length - 1
+              this.addQuestion(new LocalQuestion(q.question, q.answerType, q.originalQuestion?.id), isLast)
             }
           } else {
             this.errorMsg = 'Checklist not found!'
@@ -139,6 +147,10 @@ export class GeneratorComponent {
       if (this.recommendedQuestions.length == 0) {
         this.fetchRecommendations()
       }
+
+      if (this.recommendedGPTQuestions.length == 0) {
+        this.fetchGPTRecommendations()
+      }
     }
   }
 
@@ -165,9 +177,25 @@ export class GeneratorComponent {
 
     this.questionsService.getAppQuestionSimilar(query, except)
       .subscribe(res => {
-        this.activeRecommendation = null
         this.recommendedQuestions = res
         this.fetchRecommendationsLoading = false
+      })
+  }
+
+  fetchGPTRecommendations() {
+    //TODO: Error handling
+    this.fetchGPTRecommendationsLoading = true
+
+    let questionStrings = this.questions.map(q => q.question)
+
+    this.questionsService.getAppQuestionGpt(questionStrings)
+      .subscribe(res => {
+        const newQuestions = res.map(qText => {
+          return new LocalQuestion(qText, AnswerType.FreeTextAndJustification)
+        })
+
+        this.recommendedGPTQuestions = newQuestions
+        this.fetchGPTRecommendationsLoading = false
       })
   }
 
@@ -217,10 +245,14 @@ export class GeneratorComponent {
 
   suggestionAdd(event: MouseEvent, question: Question, index: number) {
     event.stopPropagation()
-    this.activeRecommendation = null
     this.recommendedQuestions.splice(index, 1)
-
     this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id))
+  }
+
+  gptSuggestionAdd(event: MouseEvent, question: LocalQuestion, index: number) {
+    event.stopPropagation()
+    this.recommendedGPTQuestions.splice(index, 1)
+    this.addQuestion(question)
   }
 
   saveChecklist() {
@@ -272,6 +304,14 @@ export class GeneratorComponent {
           detail: 'Could not write to your clipboard! Please copy manually or download.'
         })
       })
+  }
+
+  preventTabOpen(event: AccordionTabOpenEvent) {
+    //TODO: this hack does not work
+    console.log(event);
+
+    event.originalEvent.preventDefault()
+    event.originalEvent.stopPropagation()
   }
 }
 
