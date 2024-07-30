@@ -17,6 +17,8 @@ import { QuestionEditorComponent } from '../question-editor/question-editor.comp
 import { InputTextModule } from 'primeng/inputtext';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
+import { TooltipModule } from 'primeng/tooltip';
+
 import { AnswerTypePipe } from '../answer-type.pipe';
 
 
@@ -41,7 +43,8 @@ import { AnswerTypePipe } from '../answer-type.pipe';
     AccordionModule,
     InputTextModule,
     DividerModule,
-    SkeletonModule
+    SkeletonModule,
+    TooltipModule
   ]
 })
 export class GeneratorModule { }

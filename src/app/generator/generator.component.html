@@ -63,7 +63,10 @@
     
     @if (questions.length > 0) {
         <div class="flex align-items-center">
-            <span class="font-bold text-xl fadein animation-duration-500">Questions you may like:</span>
+            <div class="font-bold text-xl fadein animation-duration-500 flex align-items-center">
+                <span>Questions you may like:</span>
+                <i class="pi pi-question-circle ml-2 text-xl" pTooltip="Similar questions based on the questions already in your checklist. Questions are fetched from our question archive."></i>
+            </div>
             <p-button class="ml-auto py-3" size="small" label="Get new recommendations" icon="pi pi-sync" severity="info" (onClick)="fetchRecommendations()" [loading]="fetchRecommendationsLoading"></p-button>
         </div>
         
@@ -88,7 +91,10 @@
         <p-divider class="my-3"/>
 
         <div class="flex align-items-center">
-            <span class="font-bold text-xl fadein animation-duration-500">ChatGPT recommended:</span>
+            <div class="font-bold text-xl fadein animation-duration-500 flex align-items-center">
+                <span>ChatGPT recommended:</span>
+                <i class="pi pi-question-circle ml-2 text-xl" pTooltip="Questions given by ChatGPT based on the questions already in your checklist. NOTE: We currently have a global rate limit on these."></i>
+            </div>
             <p-button class="ml-auto py-3" size="small" label="Ask for new questions" icon="pi pi-sync" severity="info" (onClick)="fetchGPTRecommendations()" [loading]="fetchGPTRecommendationsLoading"></p-button>
         </div>
 
