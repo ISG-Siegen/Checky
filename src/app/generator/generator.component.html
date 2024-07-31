@@ -1,3 +1,11 @@
+<div>
+    <p-divider styleClass="mt-5"/>
+    <p class="my-4">
+        Use <i>Checky's</i> generator to create new and manage existing checklists. Give a name to your new checklist, search the database for keywords (e.g. 'evaluation', or 'source code') and add questions to your list. Use the recommender system at the bottom to add more questions. Save your list, and share it with colleagues or come back later to continue editing your checklist. When you are done, export it as LaTeX.
+    </p>
+    <p-divider />
+</div>
+
 @if (errorMsg.length > 0) {
     <h3>{{ errorMsg }}</h3>
 }
@@ -13,7 +21,7 @@
     <h3>Give Your Checklist a Name:</h3>
     <input type="text" pInputText placeholder="My Awesome Checklist" [(ngModel)]="currentChecklistName">
     
-    <p-divider class="my-3"/>
+    <p-divider class="mt-3"/>
     
     <h3>Add Questions:</h3>
     <p-autoComplete #autocomplete
