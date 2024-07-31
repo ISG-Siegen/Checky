@@ -42,7 +42,6 @@ export class GeneratorComponent {
   // ChatGPT recommendations
   recommendedGPTQuestions: LocalQuestion[] = []
   fetchGPTRecommendationsLoading = false
-  activeGPTRecommendation: number | null = null
 
   saveChecklistLoading = false
   saveDialogVisible = false
@@ -158,6 +157,7 @@ export class GeneratorComponent {
 
   fetchRecommendations() {
     //TODO: Error handling
+    this.activeRecommendation = null
     this.fetchRecommendationsLoading = true
 
     let except = this.questions.reduce((filtered, current) => {
