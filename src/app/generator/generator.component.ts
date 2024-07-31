@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, SecurityContext, ViewChild } from '@angular/core';
 import { AnswerType, Question, QuestionsService, SaveChecklistRequest, SaveQuestionRequest, SaveService } from '../api';
 import { AutoComplete, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,9 +7,10 @@ import { MessageService } from 'primeng/api';
 import { QuestionEditorComponent } from '../question-editor/question-editor.component';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, EMPTY, finalize } from 'rxjs';
+import { catchError, EMPTY, finalize, map, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AccordionTabOpenEvent } from 'primeng/accordion';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-generator',
@@ -62,7 +63,8 @@ export class GeneratorComponent {
     private msgService: MessageService,
     private saveService: SaveService,
     private location: Location,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer
   ) {
     // this.addQuestion(new LocalQuestion('First question', AnswerType.FreeText))
     // this.addQuestion(new LocalQuestion('Second question', AnswerType.FreeTextAndJustification))
@@ -109,6 +111,13 @@ export class GeneratorComponent {
   search(event: AutoCompleteCompleteEvent) {
     //TODO: Error handling
     this.questionsService.getAppQuestionSearch(event.query)
+      .pipe(
+        tap(res => {
+          res.forEach(q => {
+            q.question = this.sanitizer.sanitize(SecurityContext.HTML, q.question) ?? ''
+          })
+        })
+      )
       .subscribe(res => {
         this.suggestions = res
       })
@@ -121,12 +130,9 @@ export class GeneratorComponent {
   }
 
   edit(index: number) {
-    console.log(this.questions);
-
     this.questionEditor.editQuestion(this.questions[index])
       .subscribe(editedQuestion => {
         this.questions[index] = editedQuestion
-        console.log(this.questions);
       })
   }
 
@@ -187,28 +193,28 @@ export class GeneratorComponent {
   fetchGPTRecommendations() {
     //TODO: Error handling
     this.fetchGPTRecommendationsLoading = true
-    
+
     let questionStrings = this.questions.map(q => q.question)
-    
+
     this.questionsService.getAppQuestionGpt(questionStrings)
-    .pipe(
-      catchError((err: HttpErrorResponse) => {
-        if (err.status == 429) {
-          this.rateLimitNextFree = err.error
-        }
-        
-        return EMPTY
-      }),
-      finalize(() => {
-        this.fetchGPTRecommendationsLoading = false
-      })
-    )
-    .subscribe(res => {
-      const newQuestions = res.map(qText => {
-        return new LocalQuestion(qText, AnswerType.FreeTextAndJustification)
-      })
-      this.rateLimitNextFree = ''
-      this.recommendedGPTQuestions = newQuestions
+      .pipe(
+        catchError((err: HttpErrorResponse) => {
+          if (err.status == 429) {
+            this.rateLimitNextFree = err.error
+          }
+
+          return EMPTY
+        }),
+        finalize(() => {
+          this.fetchGPTRecommendationsLoading = false
+        })
+      )
+      .subscribe(res => {
+        const newQuestions = res.map(qText => {
+          return new LocalQuestion(qText, AnswerType.FreeTextAndJustification)
+        })
+        this.rateLimitNextFree = ''
+        this.recommendedGPTQuestions = newQuestions
       })
   }
 
@@ -248,8 +254,6 @@ export class GeneratorComponent {
     document.body.appendChild(a)
 
     a.click()
-    console.log(a.href);
-
 
     // Cleanup
     document.body.removeChild(a)
@@ -313,14 +317,6 @@ export class GeneratorComponent {
           detail: 'Could not write to your clipboard! Please copy manually or download.'
         })
       })
-  }
-
-  preventTabOpen(event: AccordionTabOpenEvent) {
-    //TODO: this hack does not work
-    console.log(event);
-
-    event.originalEvent.preventDefault()
-    event.originalEvent.stopPropagation()
   }
 }
 

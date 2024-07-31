@@ -37,7 +37,7 @@
         placeholder="Search for archived questions...">
     
         <ng-template let-item pTemplate="item">
-            <h4 style="text-wrap: wrap;">{{ item.question }}</h4>
+            <h4 style="text-wrap: wrap;" [innerHTML]="item.question"></h4>
             <ul>
                 @for (conf of item.conference; track $index) {
                     <li>
@@ -64,7 +64,7 @@
                     <p-button icon="pi pi-trash" class="ml-1" [rounded]="true" [text]="true" severity="secondary" (click)="remove($index)"/>
                 </div>
             </ng-template>
-            <h4>{{ question.question }}</h4>
+            <h4 [innerHTML]="question.question"></h4>
             <span>Answer Type: {{ question.answerType | answerType }}</span>
         </p-card>
     }
@@ -83,7 +83,7 @@
                 <p-accordionTab iconPos="end" [class.fadeoutright]="fetchRecommendationsLoading" class="fadeinleft animation-fill-forwards animation-ease-in-out animation-duration-500 block">
                     <ng-template pTemplate="header">
                         <p-button label="Add" icon="pi pi-plus-circle" (onClick)="suggestionAdd($event, rQ, $index)"></p-button>
-                        <span class="mx-3">{{ rQ.question }}</span>
+                        <span class="mx-3" [innerHTML]="rQ.question"></span>
                     </ng-template>
                     <ul>
                         @for (conf of rQ.conference; track $index) {

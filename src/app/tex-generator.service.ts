@@ -44,7 +44,8 @@ export class TexGeneratorService {
         return err
       }
 
-      tmp = tmp.replace('%%%question%%%', question.question)
+      const questionWithNewLine = question.question.replaceAll('<br>', '\n\t\\item[]')
+      tmp = tmp.replace('%%%question%%%', questionWithNewLine)
       questionsTex += tmp
     }
 
