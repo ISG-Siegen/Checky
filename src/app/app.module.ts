@@ -13,6 +13,7 @@ import { environment } from '../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
+import { CardModule } from 'primeng/card';
 
 registerLocaleData(localeDe)
 
@@ -27,6 +28,7 @@ registerLocaleData(localeDe)
     ApiModule,
     BrowserAnimationsModule,
     MenubarModule,
+    CardModule
   ],
   providers: [
     importProvidersFrom(HttpClientModule),
