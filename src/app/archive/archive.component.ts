@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MessageService, TreeNode } from 'primeng/api';
 import { TreeNodeExpandEvent } from 'primeng/tree';
 import { ArchiveService } from '../api';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-archive',
@@ -12,9 +13,15 @@ import { ArchiveService } from '../api';
 export class ArchiveComponent {
 
   nodes: TreeNode[] = []
+  archiveLoading = true
 
   constructor(private archiveService: ArchiveService, private msgService: MessageService) {
     archiveService.getAppArchiveGetconferences()
+      .pipe(
+        finalize(() => {
+          this.archiveLoading = false
+        })
+      )
       .subscribe(res => {
         res.forEach(val => {
           this.nodes.push({

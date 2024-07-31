@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
+import { SkeletonModule } from 'primeng/skeleton';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { DividerModule } from 'primeng/divider';
     ButtonModule,
     InputTextareaModule,
     ToastModule,
-    DividerModule
+    DividerModule,
+    SkeletonModule
   ]
 })
 export class ArchiveModule { }
