@@ -49,7 +49,7 @@
     </p-autoComplete>
     <div class="flex flex-column align-items-center">
         <h3>OR</h3>
-        <p-button label="Add question" icon="pi pi-plus" (onClick)="addQuestionVisible = true"/>
+        <p-button label="New Question" icon="pi pi-plus" (onClick)="addQuestionVisible = true"/>
     </div>
     
     @for (question of questions; track question.id) {
@@ -72,7 +72,7 @@
     @if (questions.length > 0) {
         <div class="flex align-items-center">
             <div class="font-bold text-xl fadein animation-duration-500 flex align-items-center">
-                <span>Questions you may like:</span>
+                <span>Similar Questions:</span>
                 <i class="pi pi-question-circle ml-2 text-xl" pTooltip="Similar questions based on the questions already in your checklist. Questions are fetched from our question archive."></i>
             </div>
             <p-button class="ml-auto py-3" size="small" label="Get new recommendations" icon="pi pi-sync" severity="info" (onClick)="fetchRecommendations()" [loading]="fetchRecommendationsLoading"></p-button>
@@ -100,8 +100,8 @@
 
         <div class="flex align-items-center">
             <div class="font-bold text-xl fadein animation-duration-500 flex align-items-center">
-                <span>ChatGPT recommended:</span>
-                <i class="pi pi-question-circle ml-2 text-xl" pTooltip="Questions given by ChatGPT based on the questions already in your checklist. NOTE: We currently have a global rate limit on these."></i>
+                <span>ChatGPT recommends:</span>
+                <i class="pi pi-question-circle ml-2 text-xl" pTooltip="Checky sends all items in your checklist to ChatGPT's API and asks for more questions. Please note, there is a usage limit per day."></i>
             </div>
             <p-button class="ml-auto py-3" size="small" label="Ask for new questions" icon="pi pi-sync" severity="info" (onClick)="fetchGPTRecommendations()" [loading]="fetchGPTRecommendationsLoading"></p-button>
         </div>
@@ -126,13 +126,13 @@
         <p-divider class="my-3"/>
     
         <div class="flex">
-            <p-button label="Save" icon="pi pi-save" severity="info" class="ml-auto mr-2" (onClick)="saveChecklist()" [loading]="saveChecklistLoading"></p-button>
+            <p-button label="Save & Share" icon="pi pi-save" severity="info" class="ml-auto mr-2" (onClick)="saveChecklist()" [loading]="saveChecklistLoading"></p-button>
     
-            <p-button label="Generate" icon="pi pi-cog" severity="success" (onClick)="generateTex()" [loading]="texGenerationLoading"></p-button>
+            <p-button label="Export (LaTeX)" icon="pi pi-cog" severity="success" (onClick)="generateTex()" [loading]="texGenerationLoading"></p-button>
         </div>
     }
     
-    <app-question-editor [(visible)]="addQuestionVisible" header="Add Question" (onSave)="addQuestion($event)" />
+    <app-question-editor [(visible)]="addQuestionVisible" header="New Question" (onSave)="addQuestion($event)" />
     <app-question-editor #questionEditor [visible]="false" header="Edit Question" />
     
     <p-dialog header="Done!" [modal]="true" [(visible)]="outputDialogVisible" [style]="{ width: '66vw' }" contentStyleClass="p-5" focusOnShow="false">
