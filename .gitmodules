@@ -1,0 +1,3 @@
+[submodule "checklist-backend"]
+	path = checklist-backend
+	url = https://github.com/ISG-Siegen/checklist-backend
