@@ -1,3 +1,5 @@
+// Root component of the application, defining its main structure and menu items for navigation.
+
 import { Component } from '@angular/core';
 
 @Component({

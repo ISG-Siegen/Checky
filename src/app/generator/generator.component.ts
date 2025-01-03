@@ -20,17 +20,20 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class GeneratorComponent {
 
+  // Suggestion list for autocomplete
   suggestions: Question[] = []
 
   @ViewChild('autocomplete')
   autocomplete!: AutoComplete
 
+  // Question management
   questions: LocalQuestion[] = []
   addQuestionVisible = false
   newQuestion: string | null = null
   answerTypes = [AnswerType.FreeText, AnswerType.FreeTextAndJustification, AnswerType.None]
   newAnswerType: AnswerType | null = null
 
+  // LaTeX generation
   texGenerationLoading = false
   texOutput = ''
   outputDialogVisible = false
@@ -44,6 +47,7 @@ export class GeneratorComponent {
   recommendedGPTQuestions: LocalQuestion[] = []
   fetchGPTRecommendationsLoading = false
 
+  // Checklist saving
   saveChecklistLoading = false
   saveDialogVisible = false
   currentChecklistName = ''
@@ -73,6 +77,7 @@ export class GeneratorComponent {
 
     let loadUuid = this.activatedRoute.snapshot.paramMap.get('uuid')
     if (loadUuid) {
+      // Loads the checklist by UUID, if available
       //TODO: Error handling
       this.loadingSavedChecklist = true
       saveService.getByUuid(loadUuid)
@@ -109,6 +114,7 @@ export class GeneratorComponent {
   }
 
   search(event: AutoCompleteCompleteEvent) {
+    // Searches for questions based on the user's input
     //TODO: Error handling
     this.questionsService.getAppQuestionSearch(event.query)
       .pipe(
@@ -124,12 +130,14 @@ export class GeneratorComponent {
   }
 
   select(event: AutoCompleteSelectEvent) {
+    // Adds the selected question to the checklist
     let question: Question = event.value
     this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id))
     this.autocomplete.clear()
   }
 
   edit(index: number) {
+    // Opens the editor to modify a question
     this.questionEditor.editQuestion(this.questions[index])
       .subscribe(editedQuestion => {
         this.questions[index] = editedQuestion
@@ -141,6 +149,7 @@ export class GeneratorComponent {
   }
 
   move(index: number, up: boolean) {
+    // Reorders questions in the checklist
     let newPos = index + (up ? -1 : 1)
     let tmp = this.questions[newPos]
     this.questions[newPos] = this.questions[index]
@@ -162,6 +171,7 @@ export class GeneratorComponent {
   }
 
   fetchRecommendations() {
+    // Fetches similar questions from the archive
     //TODO: Error handling
     this.activeRecommendation = null
     this.fetchRecommendationsLoading = true
@@ -261,12 +271,14 @@ export class GeneratorComponent {
   }
 
   suggestionAdd(event: MouseEvent, question: Question, index: number) {
+    // Adds a recommended question to the checklist
     event.stopPropagation()
     this.recommendedQuestions.splice(index, 1)
     this.addQuestion(new LocalQuestion(question.question, question.answerType, question.id))
   }
 
   gptSuggestionAdd(event: MouseEvent, question: LocalQuestion, index: number) {
+    // Adds a ChatGPT-recommended question to the checklist
     event.stopPropagation()
     this.recommendedGPTQuestions.splice(index, 1)
     this.addQuestion(question)

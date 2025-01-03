@@ -1,3 +1,5 @@
+// Main application module that configures the core components, modules, and services.
+
 import { NgModule, importProvidersFrom } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 

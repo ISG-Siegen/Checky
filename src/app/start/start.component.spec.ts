@@ -1,3 +1,5 @@
+// Unit tests for the StartComponent to ensure it initializes correctly
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StartComponent } from './start.component';

@@ -1,3 +1,5 @@
+// Unit tests for the QuestionEditorComponent to verify its initialization and behavior
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuestionEditorComponent } from './question-editor.component';

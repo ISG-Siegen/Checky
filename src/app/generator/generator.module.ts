@@ -1,3 +1,5 @@
+// Module for the Generator feature, managing its components and dependencies
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

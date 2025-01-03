@@ -1,3 +1,7 @@
+/**
+ * Defines the routing configuration for the Angular application.
+ * Specifies paths, lazy-loaded modules, and a fallback for undefined routes.
+ */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { StartComponent } from './start/start.component';

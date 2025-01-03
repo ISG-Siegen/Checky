@@ -1,70 +1,90 @@
-import { Component, EventEmitter, input, Input, Output } from '@angular/core';
+// Component for editing or creating a question, with form inputs for text and answer type.
+
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AnswerType } from '../api';
 import { LocalQuestion } from '../generator/generator.component';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-question-editor',
-  templateUrl: './question-editor.component.html',
-  styleUrl: './question-editor.component.scss'
+  templateUrl: './question-editor.component.html', 
+  styleUrl: './question-editor.component.scss' 
 })
 export class QuestionEditorComponent {
 
+  // Header text for the dialog (e.g., "Edit Question" or "New Question").
   @Input()
-  header = ''
+  header = '';
 
+  // Visibility state of the dialog.
   @Input({ required: true })
-  visible = false
+  visible = false;
+
+  // Event emitter for visibility changes to notify parent components.
   @Output()
-  visibleChange = new EventEmitter<boolean>()
+  visibleChange = new EventEmitter<boolean>();
 
-  questionText = ''
-  answerTypes = [AnswerType.FreeText, AnswerType.FreeTextAndJustification, AnswerType.None]
-  selectedAnswerType: AnswerType | null = null
+  // Input fields for the question text and answer type.
+  questionText = '';
+  answerTypes = [AnswerType.FreeText, AnswerType.FreeTextAndJustification, AnswerType.None];
+  selectedAnswerType: AnswerType | null = null;
 
+  // Optional input for editing an existing question.
   @Input()
-  question: LocalQuestion | null = null
+  question: LocalQuestion | null = null;
 
+  // Event emitter for saving the question, notifying the parent component.
   @Output()
-  onSave = new EventEmitter<LocalQuestion>()
+  onSave = new EventEmitter<LocalQuestion>();
 
-  currentEditSubject = new Subject<LocalQuestion>()
+  // Subject to manage the current edit state and provide an observable.
+  currentEditSubject = new Subject<LocalQuestion>();
 
+  // Opens the editor with a specific question for editing.
   editQuestion(question: LocalQuestion) {
-    this.question = question
-    this.questionText = question.question
-    this.selectedAnswerType = question.answerType
-    this.visible = true
-    this.currentEditSubject = new Subject()
-    return this.currentEditSubject.asObservable()
+    this.question = question;
+    this.questionText = question.question;
+    this.selectedAnswerType = question.answerType;
+    this.visible = true;
+    this.currentEditSubject = new Subject();
+    return this.currentEditSubject.asObservable(); 
   }
 
+  // Clears the form inputs, resetting text and answer type.
   clearForm() {
-    this.questionText = ''
-    this.selectedAnswerType = null
+    this.questionText = '';
+    this.selectedAnswerType = null;
   }
 
+  // Saves the current question and emits events for parent components.
   save(event: MouseEvent) {
-    //TODO: Add invalid flags when one of these cases is hit
+    // Validation: Ensure both the question text and answer type are provided.
     if (!this.questionText) {
-      return
+      return; // Exit if the question text is empty.
     }
 
     if (!this.selectedAnswerType) {
-      return
+      return; // Exit if no answer type is selected.
     }
 
+    // If no question exists, create a new one; otherwise, update the existing question.
     if (!this.question) {
-      this.question = new LocalQuestion(this.questionText, this.selectedAnswerType)
+      this.question = new LocalQuestion(this.questionText, this.selectedAnswerType);
     } else {
-      this.question.question = this.questionText
-      this.question.answerType = this.selectedAnswerType
+      this.question.question = this.questionText;
+      this.question.answerType = this.selectedAnswerType;
     }
-    this.onSave.emit(this.question)
-    this.currentEditSubject.next(this.question)
-    this.visible = false
-    this.visibleChange.emit(false)
-    this.clearForm()
+
+    // Emit the saved question to the parent component.
+    this.onSave.emit(this.question);
+
+    // Notify subscribers of the current edit state.
+    this.currentEditSubject.next(this.question);
+
+    // Close the dialog and clear the form inputs.
+    this.visible = false;
+    this.visibleChange.emit(false);
+    this.clearForm();
   }
 
 }

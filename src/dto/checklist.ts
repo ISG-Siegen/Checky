@@ -1,3 +1,5 @@
+// Interface representing a checklist, including metadata and related information
+
 import { Source } from "./source";
 import { URL } from "./url";
 

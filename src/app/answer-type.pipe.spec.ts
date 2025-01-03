@@ -1,3 +1,4 @@
+// Test suite for the AnswerTypePipe to ensure its correct behavior and instantiation.
 import { AnswerTypePipe } from './answer-type.pipe';
 
 describe('AnswerTypePipe', () => {
