@@ -15,41 +15,47 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: QuestionGroupRepository::class)]
 class QuestionGroup
 {
+    // Primary key: Unique UUID for identifying the question group.
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Groups(['question:get_questions'])]
     private ?Uuid $id = null;
-    
+
+    // Description of the question group.
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['question:get_questions'])]
     private ?string $description = null;
 
+    // Timestamp for when the question group was created.
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
     /**
      * @var Collection<int, ConferenceInstance>
      */
+    // Many-to-many relationship with conference instances.
     #[ORM\ManyToMany(targetEntity: ConferenceInstance::class, inversedBy: 'questionGroups')]
     private Collection $conference;
 
     /**
      * @var Collection<int, Question>
      */
+    // Many-to-many relationship with questions.
     #[ORM\ManyToMany(targetEntity: Question::class, inversedBy: 'questionGroups')]
     private Collection $questions;
 
+    // Constructor initializes default values and required properties.
     public function __construct(string $description)
     {
         $this->conference = new ArrayCollection();
         $this->questions = new ArrayCollection();
         $this->created_at = new DateTimeImmutable();
-
         $this->description = $description;
     }
 
+    // Getters and setters for the ID and description.
     public function getId(): ?Uuid
     {
         return $this->id;
@@ -67,6 +73,7 @@ class QuestionGroup
         return $this;
     }
 
+    // Getter and setter for the creation timestamp.
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->created_at;

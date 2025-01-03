@@ -8,11 +8,13 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Conference>
+ * Repository class for managing Conference entities.
  */
 class ConferenceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
+        // Initializes the repository with the registry and Conference entity class.
         parent::__construct($registry, Conference::class);
     }
 

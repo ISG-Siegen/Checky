@@ -8,11 +8,13 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<QuestionGroup>
+ * Repository class for managing QuestionGroup entities.
  */
 class QuestionGroupRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
+        // Initializes the repository with the registry and QuestionGroup entity class
         parent::__construct($registry, QuestionGroup::class);
     }
 

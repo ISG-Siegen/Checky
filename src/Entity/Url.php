@@ -15,6 +15,7 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: UrlRepository::class)]
 class Url
 {
+    // Primary key: Unique UUID to identify the URL.
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -22,24 +23,29 @@ class Url
     #[Groups(['archive:details'])]
     private ?Uuid $id = null;
 
+    // Name or description of the URL.
     #[ORM\Column(length: 255)]
     #[Groups(['archive:details'])]
     private ?string $name = null;
 
+    // The actual URL string.
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['archive:details'])]
     private ?string $url = null;
-    
+
+    // Timestamp for when the URL record was created.
     #[ORM\Column]
     #[Groups(['archive:details'])]
     private ?\DateTimeImmutable $created_at = null;
 
+    // Many-to-many relationship with conference instances.
     /**
      * @var Collection<int, ConferenceInstances>
      */
     #[ORM\ManyToMany(targetEntity: ConferenceInstance::class, mappedBy: 'url')]
     private Collection $conferenceInstances;
 
+    // Constructor initializes default values and required properties.
     public function __construct($name = null, $url = null)
     {
         $this->created_at = new DateTimeImmutable();
@@ -48,11 +54,13 @@ class Url
         $this->conferenceInstances = new ArrayCollection();
     }
 
+    // Getter and setter for the ID.
     public function getId(): ?Uuid
     {
         return $this->id;
     }
 
+    // Getter and setter for the name or description.
     public function getName(): ?string
     {
         return $this->name;
@@ -61,10 +69,10 @@ class Url
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
+    // Getter and setter for the URL string.
     public function getUrl(): ?string
     {
         return $this->url;
@@ -73,10 +81,10 @@ class Url
     public function setUrl(string $url): static
     {
         $this->url = $url;
-
         return $this;
     }
 
+    // Getter and setter for the creation timestamp.
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->created_at;
@@ -85,10 +93,10 @@ class Url
     public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
-
         return $this;
     }
 
+    // Accessor methods for related conference instances.
     /**
      * @return Collection<int, ConferenceInstances>
      */
@@ -103,7 +111,6 @@ class Url
             $this->conferenceInstances->add($conferenceInstance);
             $conferenceInstance->addUrl($this);
         }
-
         return $this;
     }
 
@@ -112,8 +119,6 @@ class Url
         if ($this->conferenceInstances->removeElement($conferenceInstance)) {
             $conferenceInstance->removeUrl($this);
         }
-
         return $this;
     }
-
 }

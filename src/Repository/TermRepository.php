@@ -8,16 +8,19 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Term>
+ * Repository class for managing Term entities.
  */
 class TermRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
+        // Initializes the repository with the ManagerRegistry and Term entity class.
         parent::__construct($registry, Term::class);
     }
 
     //    /**
     //     * @return Term[] Returns an array of Term objects
+    //     * Example method for querying Term entities by a specific field.
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,6 +34,9 @@ class TermRepository extends ServiceEntityRepository
     //        ;
     //    }
 
+    //    /**
+    //     * Example method for finding a single Term entity by a specific field.
+    //     */
     //    public function findOneBySomeField($value): ?Term
     //    {
     //        return $this->createQueryBuilder('t')

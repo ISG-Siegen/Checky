@@ -8,11 +8,13 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<ConferenceInstances>
+ * Example method for querying ConferenceInstances by a specific field
  */
 class ConferenceInstanceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
+        // Passes the entity class and registry to the parent constructor.
         parent::__construct($registry, ConferenceInstance::class);
     }
 

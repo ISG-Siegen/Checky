@@ -10,40 +10,46 @@ use App\Util\DatabaseUtil;
 
 /**
  * @extends ServiceEntityRepository<Question>
+ * Repository class for managing Question entities.
  */
 class QuestionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
+        // Initializes the repository with the registry and Question entity class.
         parent::__construct($registry, Question::class);
     }
 
     /**
-     * @return Question[]
+     * Finds questions where the query string matches part of the question text.
+     *
+     * @param string $query The string to search for within questions.
+     * @return Question[] Array of matching Question entities.
      */
     public function findLike(string $query): array
     {
         $qb = $this->createQueryBuilder('q');
-
         $qb->where($qb->expr()->like('q.question', $qb->expr()->literal('%' . $query . '%')));
-
         return $qb->getQuery()->getResult();
     }
 
     /**
-     * @param Uuid[] $except
-     * @return Question[]
+     * Fetches up to three random questions, excluding those with IDs in the $except array.
+     *
+     * @param Uuid[] $except Array of UUIDs to exclude from the results.
+     * @return Question[] Array of up to three random Question entities.
      */
     public function getThreeRandom(array $except): array
     {
+        // Counts the total number of questions excluding specified IDs.
         $countQb = $this->createQueryBuilder('q');
         $countQb = DatabaseUtil::filterQuestionsById($countQb, $except);
         $countQb->select('count(q)');
-        $count = $countQb->getQuery()
-            ->getSingleScalarResult();
+        $count = $countQb->getQuery()->getSingleScalarResult();
 
         $res = [];
 
+        // Fetches up to three random questions.
         for ($_ = 0; $_ < min(3, $count); $_++) {
             $r = rand(0, $count - 1);
 
@@ -59,6 +65,7 @@ class QuestionRepository extends ServiceEntityRepository
 
         return $res;
     }
+
 
 
     //    /**

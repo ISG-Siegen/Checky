@@ -8,16 +8,19 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Url>
+ * Repository class for managing Url entities.
  */
 class UrlRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
+        // Initializes the repository with the ManagerRegistry and Url entity class.
         parent::__construct($registry, Url::class);
     }
 
     //    /**
     //     * @return Url[] Returns an array of Url objects
+    //     * Example method for querying Url entities by a specific field.
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,6 +34,9 @@ class UrlRepository extends ServiceEntityRepository
     //        ;
     //    }
 
+    //    /**
+    //     * Example method for finding a single Url entity by a specific field.
+    //     */
     //    public function findOneBySomeField($value): ?Url
     //    {
     //        return $this->createQueryBuilder('u')

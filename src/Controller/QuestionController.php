@@ -28,6 +28,7 @@ class QuestionController extends AbstractController
             items: new OA\Items(ref: new Model(type: Question::class, groups: ['question:get_questions']))
         )
     )]
+    // Fetches all questions from the database and returns them as JSON
     public function getQuestions(QuestionRepository $questionRepo): JsonResponse
     {
         $res = $questionRepo->findAll();
@@ -53,6 +54,7 @@ class QuestionController extends AbstractController
         description: 'No query was given',
         content: new OA\JsonContent(type: 'string', example: 'Query missing')
     )]
+    // Searches for questions matching the query string provided in the request
     public function searchQuestions(Request $request, QuestionRepository $questionRepo): JsonResponse
     {
         $query = $request->query->get('query');
@@ -91,6 +93,7 @@ class QuestionController extends AbstractController
         description: 'One of the given UUIDs has an invalid format',
         content: new OA\JsonContent(type: 'string', example: 'Invalid UUID')
     )]
+    // Retrieves three random questions, excluding IDs provided in the "except" parameter
     public function randomQuestions(Request $request, QuestionRepository $questionRepo): JsonResponse
     {
         $except = $request->query->all('except');
@@ -151,6 +154,7 @@ class QuestionController extends AbstractController
             ]
         )
     )]
+    // Fetches questions similar to a query, filtering out excluded IDs
     public function similarQuestions(Request $request, TermFrequencyRepository $repo)
     {
         $query = $request->query->get('query');
@@ -203,6 +207,7 @@ class QuestionController extends AbstractController
             format: 'date-time'
         )
     )]
+    // Requests GPT to suggest related questions based on input questions
     public function gpt(Request $request, RateLimitRepository $rateLimitRepo)
     {
 
@@ -270,6 +275,7 @@ class QuestionController extends AbstractController
         return $this->json($funcArgs->questions);
     }
 
+    // Returns an error response for invalid OpenAI responses
     private function invalidOpenAi()
     {
         return $this->json('Invalid response from OpenAI.', status: 502);

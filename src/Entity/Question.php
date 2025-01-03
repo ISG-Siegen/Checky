@@ -16,38 +16,45 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
 {
+    // Primary key: Unique UUID to identify a question.
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Groups(['question:get_questions', 'save:updateRequest', 'save:savedChecklist'])]
-    private ?Uuid $id = null;   
-    
+    private ?Uuid $id = null;
+
+    // Many-to-many relationship with question groups.
     #[ORM\ManyToMany(targetEntity: QuestionGroup::class, mappedBy: 'questions')]
     #[Groups(['question:get_questions'])]
     private Collection $questionGroups;
-    
     /**
      * @var Collection<int, ConferenceInstance>
      */
+
+    // Many-to-many relationship with conference instances.
     #[ORM\ManyToMany(targetEntity: ConferenceInstance::class, inversedBy: 'questions')]
     #[Groups(['question:get_questions'])]
     private Collection $conference;
-    
+
+    // Stores the question text.
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['question:get_questions'])]
     private ?string $question = null;
-    
+
+    // Enum for the answer type.
     #[ORM\Column(enumType: AnswerType::class)]
     #[Groups(['question:get_questions'])]
     private ?AnswerType $answerType = null;
 
+    // Timestamp for when the question was created.
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
     /**
      * @var Collection<int, SavedQuestion>
      */
+    // One-to-many relationships for saved questions and term frequencies.
     #[ORM\OneToMany(targetEntity: SavedQuestion::class, mappedBy: 'originalQuestion')]
     private Collection $savedQuestions;
 
@@ -57,6 +64,7 @@ class Question
     #[ORM\OneToMany(targetEntity: TermFrequency::class, mappedBy: 'question')]
     private Collection $termFrequencies;
 
+    // Constructor initializes default values and sets required properties.
     public function __construct(string $question, AnswerType $answerType)
     {
         $this->conference = new ArrayCollection();
@@ -69,6 +77,7 @@ class Question
         $this->termFrequencies = new ArrayCollection();
     }
 
+    // Getters and setters for the ID.
     public function getId(): ?Uuid
     {
         return $this->id;
@@ -77,6 +86,7 @@ class Question
     /**
      * @return Collection<int, QuestionGroup>
      */
+    // Accessor methods for related question groups.
     public function getQuestionGroups(): Collection
     {
         return $this->questionGroups;
@@ -95,6 +105,7 @@ class Question
     /**
      * @return Collection<int, ConferenceInstance>
      */
+    // Accessor methods for related conference instances.
     public function getConference(): Collection
     {
         return $this->conference;
@@ -116,6 +127,7 @@ class Question
         return $this;
     }
 
+    // Getters and setters for the question text.
     public function getQuestion(): ?string
     {
         return $this->question;
@@ -128,6 +140,7 @@ class Question
         return $this;
     }
 
+    // Getters and setters for the answer type.
     public function getAnswerType(): ?AnswerType
     {
         return $this->answerType;
@@ -140,6 +153,7 @@ class Question
         return $this;
     }
 
+    // Getters and setters for creation timestamp.
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->created_at;
@@ -155,6 +169,7 @@ class Question
     /**
      * @return Collection<int, SavedQuestion>
      */
+    // Accessor methods for saved questions.
     public function getSavedQuestions(): Collection
     {
         return $this->savedQuestions;
@@ -173,7 +188,6 @@ class Question
     public function removeSavedQuestion(SavedQuestion $savedQuestion): static
     {
         if ($this->savedQuestions->removeElement($savedQuestion)) {
-            // set the owning side to null (unless already changed)
             if ($savedQuestion->getOriginalQuestion() === $this) {
                 $savedQuestion->setOriginalQuestion(null);
             }
@@ -211,4 +225,5 @@ class Question
 
         return $this;
     }
+}
 }
