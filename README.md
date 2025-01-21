@@ -1,7 +1,7 @@
 
 # 📋 Checky - The Submission Checklist Generator 📋
 
-[Checky]([url](https://checky.recommender-systems.com/)) is a **web-based and intuitive tool** that makes it easy to create, organize, and share submission checklists for academic papers, conferences, and research projects. If you want to cite Checky, please cite:
+[Checky](https://checky.recommender-systems.com) is a **web-based and intuitive tool** that makes it easy to create, organize, and share submission checklists for academic papers, conferences, and research projects. If you want to cite Checky, please cite:
 
 >Beel, Joeran, Bela Gipp, Dietmar Jannach, Alan Said, Lukas Wegmeth, and Tobias Vente. "Checky, the Paper-Submission Checklist Generator for Authors, Reviewers and LLMs." 2025. 47th European Conference on Information Retrieval (ECIR).
 
