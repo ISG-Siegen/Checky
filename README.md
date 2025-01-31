@@ -14,14 +14,14 @@
 ---
 
 ## 📑 Table of Contents
-- [Features](#features)
-- [Getting Started](#getting-started)
+- [Features](#✨-features)
+- [Getting Started](#🚀-getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-- [Development](#development)
-- [Deployment](#-deployment)
-- [Architecture Overview](#architecture-overview)
-- [Contributing](#contributing)
+- [Development](#🛠️-development)
+- [Deployment](#📦-deployment)
+- [Architecture Overview](#🏛️-architecture-overview)
+- [Contributing](#🤝-contributing)
 - [License](#license)  
 
 ---
@@ -149,7 +149,7 @@ We welcome contributions to enhance Checky's functionality and expand its checkl
 
 ## 📄 License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+This project is licensed under the MIT License.
 
 ## ✉️ Contact
 
