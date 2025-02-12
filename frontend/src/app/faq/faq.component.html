@@ -1,0 +1,44 @@
+<!-- Page Heading with a stylish card -->
+<p-card class="block mt-5 shadow-3">
+    <ng-template pTemplate="header">
+        <h2 class="m-0 px-4 pt-4">Frequently Asked Questions (FAQ)</h2>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <p>Welcome to the <i>Checky</i> FAQ section! Here, we answer common questions about the platform and its features.</p>
+    </ng-template>
+</p-card>
+
+<!-- FAQ Section with Accordion -->
+<p-card class="block mt-4 shadow-2">
+    <ng-template pTemplate="content">
+        <p-accordion class="w-full">
+            <p-accordionTab header="What is Checky?">
+                <p><i>Checky</i> is a free, open-source submission checklist generator that helps researchers create and manage checklists for paper submissions.</p>
+            </p-accordionTab>
+
+            <p-accordionTab header="How do I create a new checklist?">
+                <p>To create a checklist, navigate to the <a routerLink="/generator" class="text-primary">Generator</a>, enter a name, search for existing checklist items, and add questions manually or via the recommender system.</p>
+            </p-accordionTab>
+
+            <p-accordionTab header="Can I save or export my checklist?">
+                <p>Yes! You can save your checklist for later editing, share it with colleagues, or export it as LaTeX for academic use. You can access your saved Checklist via the provided link.</p>
+            </p-accordionTab>
+
+            <p-accordionTab header="Where can I get support?">
+                <p>If you need help or want to report a bug, visit our <a href="https://github.com/ISG-Siegen/Checky" class="text-primary">GitHub repository</a> or contact the developers directly via the provided contact information.</p>
+            </p-accordionTab>
+        
+            <p-accordionTab header="What is the Checky Archive?">
+                <p>The <a href="https://checky.recommender-systems.com/archive" class="text-primary">Checky Archive</a> contains a collection of existing checklists from conferences and journals in the field of (automated) machine learning and recommender systems. Each checklist is available as a PDF and/or LaTeX file.</p>
+            </p-accordionTab>
+        
+            <p-accordionTab header="How does Checky use the ChatGPT API?">
+                <p>Checky integrates the ChatGPT API to suggest additional questions for your checklist. Based on the items you have already added, ChatGPT generates relevant suggestions to complete your checklist.</p>
+            </p-accordionTab>
+
+        </p-accordion>
+    </ng-template>
+</p-card>
+
+<!-- Bottom Divider for Clean Look -->
+<p-divider class="mt-5" />

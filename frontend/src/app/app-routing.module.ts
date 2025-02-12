@@ -10,6 +10,8 @@ const routes: Routes = [
   { path: '', component: StartComponent },
   { path: 'archive', loadChildren: () => import('./archive/archive.module').then(m => m.ArchiveModule) },
   { path: 'generator', loadChildren: () => import('./generator/generator.module').then(m => m.GeneratorModule) },
+  { path: 'faq', loadChildren: () => import('./faq/faq.module').then(m => m.FaqModule) },
+
   //TODO: Add 404 handler
   { path: '**', component: StartComponent },
 ];

@@ -26,6 +26,11 @@ export class AppComponent {
       label: 'Generator',
       icon: 'pi pi-cog',
       route: '/generator',
+    },
+    {
+      label: "FAQ",
+      icon: 'pi pi-question-circle',
+      route: '/faq'
     }
   ]
 
