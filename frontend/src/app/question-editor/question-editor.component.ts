@@ -3,12 +3,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AnswerType } from '../api';
 import { LocalQuestion } from '../generator/generator.component';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
+import { AnswerTypePipe } from '../answer-type.pipe';
 
 @Component({
   selector: 'app-question-editor',
-  templateUrl: './question-editor.component.html', 
-  styleUrl: './question-editor.component.scss' 
+  templateUrl: './question-editor.component.html',
+  styleUrl: './question-editor.component.scss'
 })
 export class QuestionEditorComponent {
 
@@ -26,7 +27,7 @@ export class QuestionEditorComponent {
 
   // Input fields for the question text and answer type.
   questionText = '';
-  answerTypes = [AnswerType.FreeText, AnswerType.FreeTextAndJustification, AnswerType.None];
+  answerTypes = [AnswerType.FreeText, AnswerType.FreeTextAndJustification, AnswerType.None].map(type => { return { label: this.AnswerTypePipe.transform(type), value: type } })
   selectedAnswerType: AnswerType | null = null;
 
   // Optional input for editing an existing question.
@@ -40,6 +41,8 @@ export class QuestionEditorComponent {
   // Subject to manage the current edit state and provide an observable.
   currentEditSubject = new Subject<LocalQuestion>();
 
+  constructor(private AnswerTypePipe: AnswerTypePipe) { }
+
   // Opens the editor with a specific question for editing.
   editQuestion(question: LocalQuestion) {
     this.question = question;
@@ -47,7 +50,7 @@ export class QuestionEditorComponent {
     this.selectedAnswerType = question.answerType;
     this.visible = true;
     this.currentEditSubject = new Subject();
-    return this.currentEditSubject.asObservable(); 
+    return this.currentEditSubject.asObservable();
   }
 
   // Clears the form inputs, resetting text and answer type.

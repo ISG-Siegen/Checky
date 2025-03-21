@@ -30,6 +30,9 @@ import { AnswerTypePipe } from '../answer-type.pipe';
     QuestionEditorComponent,
     AnswerTypePipe
   ],
+  providers: [
+    AnswerTypePipe
+  ],
   imports: [
     CommonModule,
     GeneratorRoutingModule,
