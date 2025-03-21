@@ -230,7 +230,7 @@ export class GeneratorComponent {
 
   generateTex() {
     this.texGenerationLoading = true
-    this.texOutput = this.texService.buildTex(this.questions)
+    this.texOutput = this.texService.buildTex(this.currentChecklistName, this.questions)
     this.outputDialogVisible = true
     this.texGenerationLoading = false
   }
