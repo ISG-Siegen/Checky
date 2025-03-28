@@ -60,9 +60,9 @@ export class TexGeneratorService {
       return err;
     }
 
-    this.checklist_tex = this.checklist_tex.replace('%%%checklistName%%%', checklistName)
+    let tex_out = this.checklist_tex.replace('%%%checklistName%%%', checklistName)
 
     // Inserts the generated questions into the main checklist template.
-    return this.checklist_tex.replace('%%%items%%%', questionsTex);
+    return tex_out.replace('%%%items%%%', questionsTex);
   }
 }
