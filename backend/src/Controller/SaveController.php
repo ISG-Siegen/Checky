@@ -82,10 +82,10 @@ class SaveController extends AbstractController
             $em->persist($q); // Marks the entity for persistence.
         }
 
-        /** @var SavedChecklist|null $oldChecklist */
         $oldChecklist = null;
         if ($request->uuid) {
             // Retrieves the existing checklist if a UUID is provided.
+            /** @var SavedChecklist|null $oldChecklist */
             $oldChecklist = $savedChecklistRepo->find($request->uuid);
         }
 
@@ -96,6 +96,7 @@ class SaveController extends AbstractController
             }
             $oldChecklist->setQuestions($newQuestions);
             $oldChecklist->setName($request->name);
+            $oldChecklist->setDescription($request->description);
             $oldChecklist->setUpdatedAt(new DateTime()); // Updates the timestamp.
             $em->persist($oldChecklist);
             $em->flush();
@@ -103,7 +104,7 @@ class SaveController extends AbstractController
         }
 
         // Creates a new checklist if no UUID is provided or the UUID does not exist.
-        $newChecklist = new SavedChecklist($request->name);
+        $newChecklist = new SavedChecklist($request->name, $request->description);
         foreach ($newQuestions as $newQ) {
             $newChecklist->addQuestion($newQ); // Adds new questions to the checklist.
         }

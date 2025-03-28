@@ -17,6 +17,9 @@ class SaveChecklistRequest {
     public string $name; // Name of the checklist to be saved or updated.
 
     #[Groups('save:updateRequest')]
+    public string $description; // Description of the checklist to be saved or updated.
+
+    #[Groups('save:updateRequest')]
     /**
      * @var SaveQuestionRequest[] // Array of question requests to be saved in the checklist.
      */

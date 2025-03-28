@@ -27,7 +27,7 @@ export class TexGeneratorService {
   }
   // TODO: Maybe print some error to user when one of these cases are met (should never actually happen)
   // Generates a complete TeX document by inserting questions into the main checklist template.
-  buildTex(checklistName: string, questions: LocalQuestion[]) {
+  buildTex(checklistName: string, checklistDescription: string, questions: LocalQuestion[]) {
     let questionsTex = ''; // Holds the TeX content for all questions.
 
     for (const question of questions) {
@@ -61,6 +61,8 @@ export class TexGeneratorService {
     }
 
     let tex_out = this.checklist_tex.replace('%%%checklistName%%%', checklistName)
+    tex_out = tex_out.replace('%%%checklistDescription%%%', checklistDescription)
+
 
     // Inserts the generated questions into the main checklist template.
     return tex_out.replace('%%%items%%%', questionsTex);

@@ -45,10 +45,15 @@ class SavedChecklist
     #[Groups(['save:savedChecklist', 'save:updateRequest'])]
     private Collection $questions;
 
+    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['save:savedChecklist', 'save:updateRequest'])]
+    private ?string $description = null;
+
     // Constructor initializes default values for the checklist.
-    public function __construct(string $name)
+    public function __construct(string $name, string $description)
     {
         $this->name = $name;
+        $this->description = $description;
         $this->created_at = new DateTimeImmutable();
         $this->updated_at = new DateTime();
         $this->questions = new ArrayCollection();
@@ -137,5 +142,17 @@ class SavedChecklist
         foreach ($questions as $newQuestion) {
             $this->addQuestion($newQuestion);
         }
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
     }
 }

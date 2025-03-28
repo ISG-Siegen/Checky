@@ -7,9 +7,8 @@ import { MessageService } from 'primeng/api';
 import { QuestionEditorComponent } from '../question-editor/question-editor.component';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, EMPTY, finalize, map, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AccordionTabOpenEvent } from 'primeng/accordion';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -51,6 +50,7 @@ export class GeneratorComponent {
   saveChecklistLoading = false
   saveDialogVisible = false
   currentChecklistName = ''
+  currentChecklistDescription = 'Carefully read each question and replace the default \\checklistTODO\\space with your answer. If a question asks for justification, make sure to include a brief explanation in your response.'
   currentChecklistUuid: string | null = null
   currentEditLink = ''
   loadingSavedChecklist = false
@@ -97,6 +97,7 @@ export class GeneratorComponent {
 
           if (res) {
             this.currentChecklistName = res.name
+            this.currentChecklistDescription = res.description
             this.currentChecklistUuid = res.id ?? uuidv4()
 
             for (const [index, q] of res.questions.entries()) {
@@ -230,7 +231,7 @@ export class GeneratorComponent {
 
   generateTex() {
     this.texGenerationLoading = true
-    this.texOutput = this.texService.buildTex(this.currentChecklistName, this.questions)
+    this.texOutput = this.texService.buildTex(this.currentChecklistName, this.currentChecklistDescription, this.questions)
     this.outputDialogVisible = true
     this.texGenerationLoading = false
   }
@@ -298,6 +299,7 @@ export class GeneratorComponent {
     let request: SaveChecklistRequest = {
       uuid: this.currentChecklistUuid,
       name: this.currentChecklistName,
+      description: this.currentChecklistDescription,
       questionRequests: questionRequests
     }
 
