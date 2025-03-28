@@ -57,6 +57,7 @@ export class QuestionEditorComponent {
   clearForm() {
     this.questionText = '';
     this.selectedAnswerType = null;
+    this.question = null;
   }
 
   // Saves the current question and emits events for parent components.

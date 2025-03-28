@@ -1,8 +1,10 @@
 <!-- Dialog for creating or editing a question -->
+<!-- NOTE: Closing using escape caused some problems related to #1, so I disabled it for now using closeOnEscape="false" -->
 <p-dialog 
     [header]="header" 
     [modal]="true" 
     [(visible)]="visible" 
+    closeOnEscape="false"
     [style]="{ width: '66vw' }" 
     contentStyleClass="p-5" 
     focusOnShow="false"
